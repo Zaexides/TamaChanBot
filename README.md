@@ -1,0 +1,2 @@
+# TamaChanBot
+A Discord Bot

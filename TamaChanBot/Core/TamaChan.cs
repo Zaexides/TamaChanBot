@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Discord.WebSocket;
-using Discord.Commands;
 using TamaChanBot.Core.Settings;
 using TamaChanBot.Utility;
 
@@ -13,7 +12,6 @@ namespace TamaChanBot.Core
         private const int RECONNECT_DELAY = 1000;
 
         private DiscordSocketClient client;
-        private CommandService commandService;
 
         private bool reconnect = true;
 

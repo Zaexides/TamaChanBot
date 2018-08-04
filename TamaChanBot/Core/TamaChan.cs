@@ -17,21 +17,23 @@ namespace TamaChanBot.Core
 
         public BotSettings botSettings;
 
-        public TamaChan Instance { get; private set; }
+        public static TamaChan Instance { get; private set; }
+        public static EventSystem EventSystem { get; private set; }
 
         public TamaChan()
         {
             Instance = this;
             botSettings = new BotSettings().LoadFromFile(BOT_SETTINGS_PATH);
+            client = new DiscordSocketClient();
+            EventSystem = new EventSystem(client);
         }
 
         public async Task Start()
         {
-            if (client != null && (client.ConnectionState == Discord.ConnectionState.Connected || client.ConnectionState == Discord.ConnectionState.Connecting))
+            if (client.ConnectionState == Discord.ConnectionState.Connected || client.ConnectionState == Discord.ConnectionState.Connecting)
                 return; //Cancel out when already running.
 
             Logger.LogInfo("Initializing new client...");
-            client = new DiscordSocketClient();
 
             while (reconnect)
             {

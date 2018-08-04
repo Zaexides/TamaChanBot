@@ -130,6 +130,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CommandBase.cs" />
+    <Compile Include="Core\EventSystem.cs" />
+    <Compile Include="Commands\MessageContext.cs" />
     <Compile Include="Core\Logger.cs" />
     <Compile Include="Core\Settings\BotSettings.cs" />
     <Compile Include="Core\Settings\Settings.cs" />

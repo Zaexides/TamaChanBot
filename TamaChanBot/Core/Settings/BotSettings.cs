@@ -8,6 +8,7 @@ namespace TamaChanBot.Core.Settings
     public sealed class BotSettings : Settings<BotSettings>
     {
         public BotToken botToken;
+        public string commandPrefix = "t.";
 
         public override BotSettings LoadFromFile(string filepath)
         {

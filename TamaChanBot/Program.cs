@@ -5,6 +5,19 @@ namespace TamaChanBot
 {
     class Program
     {
-        public static void Main(string[] args) => Task.Run(() => new TamaChan().Start()).Wait();
+        private static TamaChan bot;
+
+        public static void Main(string[] args)
+        {
+            bot = new TamaChan();
+            System.Console.CancelKeyPress += Console_CancelKeyPress;
+            Task.Run(() => bot.Start()).Wait();
+            System.Console.WriteLine("...?");
+        }
+
+        private static void Console_CancelKeyPress(object sender, System.ConsoleCancelEventArgs e)
+        {
+            Task.Run(() => bot.Stop()).Wait();
+        }
     }
 }

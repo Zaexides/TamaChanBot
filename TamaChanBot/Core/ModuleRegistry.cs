@@ -1,0 +1,96 @@
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Collections.Generic;
+using TamaChanBot.API;
+
+namespace TamaChanBot.Core
+{
+    public sealed class ModuleRegistry
+    {
+        private const string MODULE_LIBRARY_PATH = "Modules";
+        private const string MODULE_LIBRARY_EXTENSION = "*.dll";
+        private readonly Dictionary<string, TamaChanModule> registry = new Dictionary<string, TamaChanModule>();
+
+        internal void RegisterModules()
+        {
+            if(!Directory.Exists(MODULE_LIBRARY_PATH))
+            {
+                Directory.CreateDirectory(MODULE_LIBRARY_PATH);
+                throw new DirectoryNotFoundException($"Directory \"{MODULE_LIBRARY_PATH}\" did not exist. Created it instead. Please add in modules there.");
+            }
+            Logger.LogInfo("Registering modules...");
+            Assembly[] assemblies = LoadAssemblies();
+            RegisterModules(assemblies);
+        }
+
+        private void RegisterModules(Assembly[] assemblies)
+        {
+            foreach(Assembly assembly in assemblies)
+            {
+                Type[] assemblyTypes = assembly.GetTypes();
+                foreach(Type type in assemblyTypes)
+                {
+                    if(!type.IsAbstract && type.IsSubclassOf(typeof(TamaChanModule)))
+                    {
+                        ModuleAttribute moduleAttribute = type.GetCustomAttribute<ModuleAttribute>();
+                        if (moduleAttribute == null)
+                            Logger.LogWarning($"Class {type.FullName} from {assembly.FullName} inherits TamaChanModule, but does not contain the Module attribute. Module will be ignored.");
+                        else
+                        {
+                            try
+                            {
+                                TamaChanModule module = Activator.CreateInstance(type) as TamaChanModule;
+                                RegisterModule(module, moduleAttribute);
+                            }
+                            catch(Exception ex)
+                            {
+                                Logger.LogError($"Could not instantiate and register module {type.FullName} from {assembly.FullName}: " + ex.ToString());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void RegisterModule(TamaChanModule module, ModuleAttribute attribute)
+        {
+            if (attribute.moduleName == string.Empty || attribute.moduleName == null)
+                throw new ArgumentException("Module name can not be null or an empty string.");
+            if (registry.ContainsKey(attribute.moduleName))
+                throw new ArgumentException($"Module registry already contains a module with the name \"{attribute.moduleName}\".");
+
+            string logString = $"Registering Module \"{attribute.moduleName}\"";
+            if (attribute.Version != null && !attribute.Version.Equals(string.Empty))
+                logString += $" version \"{attribute.Version}\"";
+            Logger.LogInfo(logString + "...");
+
+            registry.Add(attribute.moduleName, module);
+        }
+
+        private Assembly[] LoadAssemblies()
+        {
+            string[] filepaths = Directory.GetFiles(MODULE_LIBRARY_PATH, MODULE_LIBRARY_EXTENSION, SearchOption.AllDirectories);
+            Assembly[] assemblies = new Assembly[filepaths.Length];
+
+            for(int i = 0; i < filepaths.Length; i++)
+            {
+                filepaths[i] = Environment.CurrentDirectory + @"\" + filepaths[i];
+                try
+                {
+                    assemblies[i] = Assembly.LoadFile(filepaths[i]);
+                }
+                catch (FileLoadException flEx)
+                {
+                    Logger.LogError($"File at path {filepaths[i]} could not be loaded.\r\n" + flEx.ToString());
+                }
+                catch (BadImageFormatException bifEx)
+                {
+                    Logger.LogError($"File at path {filepaths[i]} is not a valid module file. Perhaps this was compiled using the wrong version?\r\n" + bifEx.ToString());
+                }
+            }
+
+            return assemblies;
+        }
+    }
+}

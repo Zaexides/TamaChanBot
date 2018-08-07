@@ -1,11 +1,10 @@
 ﻿using System;
 using Discord;
-using TamaChanBot.Utility;
 using System.Threading.Tasks;
 
-namespace TamaChanBot.Commands
+namespace TamaChanBot.API
 {
-    public abstract class CommandBase
+    public abstract class Command
     {
         public virtual bool CanExecute(GuildPermission permissions, MessageContext context)
         {

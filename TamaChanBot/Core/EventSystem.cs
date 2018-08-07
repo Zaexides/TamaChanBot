@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using TamaChanBot.Commands;
+using TamaChanBot.API;
 
 namespace TamaChanBot.Core
 {

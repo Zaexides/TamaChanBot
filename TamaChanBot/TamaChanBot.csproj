@@ -130,9 +130,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\CommandBase.cs" />
+    <Compile Include="API\Command.cs" />
+    <Compile Include="API\MessageContext.cs" />
+    <Compile Include="API\ModuleAttribute.cs" />
+    <Compile Include="API\TamaChanModule.cs" />
+    <Compile Include="Core\ModuleRegistry.cs" />
     <Compile Include="Core\EventSystem.cs" />
-    <Compile Include="Commands\MessageContext.cs" />
     <Compile Include="Core\Logger.cs" />
     <Compile Include="Core\Settings\BotSettings.cs" />
     <Compile Include="Core\Settings\Settings.cs" />

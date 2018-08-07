@@ -19,6 +19,7 @@ namespace TamaChanBot.Core
 
         public static TamaChan Instance { get; private set; }
         public static EventSystem EventSystem { get; private set; }
+        public static ModuleRegistry ModuleRegistry { get; private set; }
 
         public TamaChan()
         {
@@ -26,6 +27,8 @@ namespace TamaChanBot.Core
             botSettings = new BotSettings().LoadFromFile(BOT_SETTINGS_PATH);
             client = new DiscordSocketClient();
             EventSystem = new EventSystem(client);
+            ModuleRegistry = new ModuleRegistry();
+            ModuleRegistry.RegisterModules();
         }
 
         public async Task Start()

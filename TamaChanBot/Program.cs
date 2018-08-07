@@ -12,7 +12,6 @@ namespace TamaChanBot
             bot = new TamaChan();
             System.Console.CancelKeyPress += Console_CancelKeyPress;
             Task.Run(() => bot.Start()).Wait();
-            System.Console.WriteLine("...?");
         }
 
         private static void Console_CancelKeyPress(object sender, System.ConsoleCancelEventArgs e)

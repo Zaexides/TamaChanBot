@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TamaChanBot")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Discord.NET bot for Discord")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TamaChanBot")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright © 2018 Zaexides")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using TamaChanBot.API;
+using TamaChanBot.Utility;
 
 namespace TamaChanBot.Core
 {
@@ -19,7 +20,7 @@ namespace TamaChanBot.Core
                 Directory.CreateDirectory(MODULE_LIBRARY_PATH);
                 throw new DirectoryNotFoundException($"Directory \"{MODULE_LIBRARY_PATH}\" did not exist. Created it instead. Please add in modules there.");
             }
-            Logger.LogInfo("Registering modules...");
+            TamaChan.Instance.Logger.LogInfo("Registering modules...");
             Assembly[] assemblies = LoadAssemblies();
             RegisterModules(assemblies);
         }
@@ -35,25 +36,26 @@ namespace TamaChanBot.Core
                     {
                         ModuleAttribute moduleAttribute = type.GetCustomAttribute<ModuleAttribute>();
                         if (moduleAttribute == null)
-                            Logger.LogWarning($"Class {type.FullName} from {assembly.FullName} inherits TamaChanModule, but does not contain the Module attribute. Module will be ignored.");
-                        else
+                            TamaChan.Instance.Logger.LogWarning($"Class {type.FullName} from {assembly.FullName} inherits TamaChanModule, but does not contain the Module attribute. Module will be ignored.");
+                        else if (moduleAttribute.moduleName.IsRegistryValid())
                         {
                             try
                             {
-                                TamaChanModule module = Activator.CreateInstance(type) as TamaChanModule;
-                                RegisterModule(module, moduleAttribute);
+                                RegisterModule(type, moduleAttribute);
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
-                                Logger.LogError($"Could not instantiate and register module {type.FullName} from {assembly.FullName}: " + ex.ToString());
+                                TamaChan.Instance.Logger.LogError($"Could not instantiate and register module {type.FullName} from {assembly.FullName}: " + ex.ToString());
                             }
                         }
+                        else
+                            TamaChan.Instance.Logger.LogError($"Module class {type.FullName} from {assembly.FullName} has invalid characters in its name: \"{moduleAttribute.moduleName}\". May only contain alphabetic characters and periods.");
                     }
                 }
             }
         }
 
-        private void RegisterModule(TamaChanModule module, ModuleAttribute attribute)
+        private void RegisterModule(Type moduleType, ModuleAttribute attribute)
         {
             if (attribute.moduleName == string.Empty || attribute.moduleName == null)
                 throw new ArgumentException("Module name can not be null or an empty string.");
@@ -63,9 +65,11 @@ namespace TamaChanBot.Core
             string logString = $"Registering Module \"{attribute.moduleName}\"";
             if (attribute.Version != null && !attribute.Version.Equals(string.Empty))
                 logString += $" version \"{attribute.Version}\"";
-            Logger.LogInfo(logString + "...");
+            TamaChan.Instance.Logger.LogInfo(logString + "...");
 
+            TamaChanModule module = Activator.CreateInstance(moduleType) as TamaChanModule;
             registry.Add(attribute.moduleName, module);
+            TamaChan.Instance.Logger.LogInfo($"Module \"{attribute.moduleName}\" registered.");
         }
 
         private Assembly[] LoadAssemblies()
@@ -82,11 +86,11 @@ namespace TamaChanBot.Core
                 }
                 catch (FileLoadException flEx)
                 {
-                    Logger.LogError($"File at path {filepaths[i]} could not be loaded.\r\n" + flEx.ToString());
+                    TamaChan.Instance.Logger.LogError($"File at path {filepaths[i]} could not be loaded.\r\n" + flEx.ToString());
                 }
                 catch (BadImageFormatException bifEx)
                 {
-                    Logger.LogError($"File at path {filepaths[i]} is not a valid module file. Perhaps this was compiled using the wrong version?\r\n" + bifEx.ToString());
+                    TamaChan.Instance.Logger.LogError($"File at path {filepaths[i]} is not a valid module file. Perhaps this was compiled using the wrong version?\r\n" + bifEx.ToString());
                 }
             }
 

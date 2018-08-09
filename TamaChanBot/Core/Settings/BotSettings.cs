@@ -22,7 +22,7 @@ namespace TamaChanBot.Core.Settings
             }
             catch(Exception ex)
             {
-                Logger.LogError("Failed to deserialize BotSettings class: " + ex.ToString());
+                TamaChan.Instance.Logger.LogError("Failed to deserialize BotSettings class: " + ex.ToString());
             }
             return botSettings == null ? new BotSettings() : botSettings;
         }
@@ -38,7 +38,7 @@ namespace TamaChanBot.Core.Settings
             }
             catch(Exception ex)
             {
-                Logger.LogError("Failed to serialize BotSettings class: " + ex.ToString());
+                TamaChan.Instance.Logger.LogError("Failed to serialize BotSettings class: " + ex.ToString());
             }
         }
         

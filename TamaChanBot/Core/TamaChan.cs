@@ -18,16 +18,21 @@ namespace TamaChanBot.Core
         public BotSettings botSettings;
 
         public static TamaChan Instance { get; private set; }
-        public static EventSystem EventSystem { get; private set; }
-        public static ModuleRegistry ModuleRegistry { get; private set; }
+        public EventSystem EventSystem { get; private set; }
+        public ModuleRegistry ModuleRegistry { get; private set; }
+        public CommandRegistry CommandRegistry { get; private set; }
+        
+        internal Logger Logger { get; private set; }
 
         public TamaChan()
         {
             Instance = this;
+            Logger = new Logger("Main");
             botSettings = new BotSettings().LoadFromFile(BOT_SETTINGS_PATH);
             client = new DiscordSocketClient();
             EventSystem = new EventSystem(client);
             ModuleRegistry = new ModuleRegistry();
+            CommandRegistry = new CommandRegistry();
             ModuleRegistry.RegisterModules();
         }
 

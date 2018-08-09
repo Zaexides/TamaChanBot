@@ -134,6 +134,7 @@
     <Compile Include="API\MessageContext.cs" />
     <Compile Include="API\ModuleAttribute.cs" />
     <Compile Include="API\TamaChanModule.cs" />
+    <Compile Include="Core\CommandRegistry.cs" />
     <Compile Include="Core\ModuleRegistry.cs" />
     <Compile Include="Core\EventSystem.cs" />
     <Compile Include="Core\Logger.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Core\TamaChan.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\StringHelper.cs" />
     <Compile Include="Utility\TokenNotSetException.cs" />
   </ItemGroup>
   <ItemGroup>

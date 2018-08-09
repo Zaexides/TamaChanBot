@@ -1,4 +1,5 @@
 ﻿using System;
+using TamaChanBot.Core;
 
 namespace TamaChanBot.API
 {
@@ -8,5 +9,7 @@ namespace TamaChanBot.API
         {
 
         }
+
+        protected void RegisterCommand(string commandName, Command command) => TamaChan.Instance.CommandRegistry.RegisterCommand(this, commandName, command);
     }
 }

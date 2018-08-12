@@ -9,7 +9,7 @@ namespace TamaChanBot.Core
     public sealed class TamaChan
     {
         private const string BOT_SETTINGS_PATH = @"Settings\bot_settings.json";
-        private const int RECONNECT_DELAY = 1000;
+        private const int RECONNECT_DELAY = 10000;
 
         private DiscordSocketClient client;
 
@@ -29,6 +29,7 @@ namespace TamaChanBot.Core
             Instance = this;
             Logger = new Logger("Main");
             botSettings = new BotSettings().LoadFromFile(BOT_SETTINGS_PATH);
+            Logger.allowSystemBeeps = botSettings.allowErrorBeeps;
             client = new DiscordSocketClient();
             EventSystem = new EventSystem(client);
             ModuleRegistry = new ModuleRegistry();
@@ -55,6 +56,7 @@ namespace TamaChanBot.Core
                 catch (Exception ex)
                 {
                     Logger.LogError("An error occured: " + ex.ToString());
+                    Logger.LogInfo($"Will try reconnecting in {RECONNECT_DELAY * 0.001} seconds...");
                     await Task.Delay(RECONNECT_DELAY);
                     if (reconnect)
                         Logger.LogInfo("Reconnecting...");

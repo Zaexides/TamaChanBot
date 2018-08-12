@@ -10,7 +10,22 @@ namespace TamaChanBot.Core
     {
         private readonly Dictionary<string, Command> registry = new Dictionary<string, Command>();
 
-        public void RegisterCommand(TamaChanModule module, string commandName, Command command)
+        public void RegisterModuleCommands(TamaChanModule module)
+        {
+            MethodInfo[] methods = module.GetType().GetMethods();
+
+            foreach(MethodInfo m in methods)
+            {
+                CommandAttribute attribute = m.GetCustomAttribute<CommandAttribute>();
+                if(attribute != null)
+                {
+                    Command command = new Command(m, attribute.PermissionFlag, module);
+                    RegisterCommand(module, attribute.commandName, command);
+                }
+            }
+        }
+
+        private void RegisterCommand(TamaChanModule module, string commandName, Command command)
         {
             try
             {
@@ -18,11 +33,9 @@ namespace TamaChanBot.Core
                 if (!commandName.IsRegistryValid())
                     throw new ArgumentException($"Command from module {attribute.moduleName} was given an invalid name: \"{commandName}\". Command names may only contain alphabetic characters and periods.");
 
-                command.RegistryName = $"{commandName.ToLower()}@{attribute.moduleName}";
-                TamaChan.Instance.Logger.LogInfo($"Registering \"{attribute.moduleName} command \"{command.RegistryName}\"...");
-                registry.Add(command.RegistryName, command);
-                command.OnRegister();
-                TamaChan.Instance.Logger.LogInfo($"Command \"{command.RegistryName}\" registered.");
+                TamaChan.Instance.Logger.LogInfo($"Registering \"{attribute.moduleName} command \"{commandName.ToLower()}\"...");
+                registry.Add(commandName.ToLower(), command);
+                TamaChan.Instance.Logger.LogInfo($"Command \"{commandName.ToLower()}\" registered.");
             }
             catch (Exception ex)
             {

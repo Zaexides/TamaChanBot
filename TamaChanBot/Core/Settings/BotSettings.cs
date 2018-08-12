@@ -9,6 +9,7 @@ namespace TamaChanBot.Core.Settings
     {
         public BotToken botToken;
         public string commandPrefix = "t.";
+        public bool allowErrorBeeps = true;
 
         public override BotSettings LoadFromFile(string filepath)
         {

@@ -5,6 +5,7 @@ namespace TamaChanBot.Core
     public class Logger
     {
         private readonly string loggerName;
+        public bool allowSystemBeeps = true;
 
         public Logger(string name)
         {
@@ -14,7 +15,7 @@ namespace TamaChanBot.Core
         private void Log(LogType logType, object contents)
         {
             Console.ForegroundColor = GetConsoleColorFromType(logType);
-            if (logType == LogType.Error)
+            if (allowSystemBeeps && logType == LogType.Error)
                 Console.Beep();
             Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} [{logType.ToString()}] [{loggerName}] - {contents.ToString()}");
         }

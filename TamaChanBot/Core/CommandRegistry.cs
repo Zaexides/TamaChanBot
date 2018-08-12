@@ -10,6 +10,17 @@ namespace TamaChanBot.Core
     {
         private readonly Dictionary<string, Command> registry = new Dictionary<string, Command>();
 
+        public Command this[string k]
+        {
+            get
+            {
+                if (registry.ContainsKey(k))
+                    return registry[k];
+                else
+                    return null;
+            }
+        }
+
         public void RegisterModuleCommands(TamaChanModule module)
         {
             MethodInfo[] methods = module.GetType().GetMethods();

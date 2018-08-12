@@ -9,9 +9,11 @@ namespace TamaChanBot.API
     //require me to update the MessageContext class.
     public class MessageContext
     {
-        protected readonly string message;
-        protected readonly ulong authorId;
-        protected readonly bool sentByBot;
+        public readonly string message;
+        public readonly ulong authorId;
+        public readonly bool sentByBot;
+        public readonly ulong? channelId;
+        public readonly ulong? serverId;
 
         [Obsolete("Usage not recommended.")]
         protected readonly SocketUserMessage wrappedMessage;
@@ -21,8 +23,23 @@ namespace TamaChanBot.API
             this.message = message.Content;
             this.authorId = message.Author.Id;
             this.sentByBot = message.Author.IsBot;
-
+            if(message.Channel is SocketGuildChannel)
+            {
+                this.channelId = (message.Channel as SocketGuildChannel).Id;
+                this.serverId = (message.Channel as SocketGuildChannel).Guild.Id;
+            }
             this.wrappedMessage = message;
+        }
+
+        public override string ToString()
+        {
+            string str = $"{{{authorId}}} ";
+            if (sentByBot)
+                str += "[BOT] ";
+            if (serverId != null)
+                str += $"@{serverId}.{channelId} ";
+            str += $"- \"{message}\"";
+            return str;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace TamaChanBot.API
     public class MessageContext
     {
         public readonly string message;
+        public readonly string parameterString;
         public readonly ulong authorId;
         public readonly bool sentByBot;
         public readonly ulong? channelId;
@@ -21,6 +22,11 @@ namespace TamaChanBot.API
         public MessageContext(SocketUserMessage message)
         {
             this.message = message.Content;
+
+            int parameterStart = this.message.IndexOf(' ');
+            if (parameterStart > 0)
+                this.parameterString = this.message.Substring(parameterStart + 1);
+
             this.authorId = message.Author.Id;
             this.sentByBot = message.Author.IsBot;
             if(message.Channel is SocketGuildChannel)

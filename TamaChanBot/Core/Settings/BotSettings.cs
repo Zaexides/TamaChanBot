@@ -10,6 +10,7 @@ namespace TamaChanBot.Core.Settings
         public BotToken botToken;
         public string commandPrefix = "t.";
         public bool allowErrorBeeps = true;
+        public string botName = "Tama Chan";
 
         public override BotSettings LoadFromFile(string filepath)
         {

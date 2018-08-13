@@ -79,5 +79,13 @@ namespace TamaChanBot.Core
             }
             Logger.LogInfo("Stopped succesfully!");
         }
+
+        public SocketSelfUser GetSelf()
+        {
+            if (client != null && client.ConnectionState == Discord.ConnectionState.Connected)
+                return client.CurrentUser;
+            else
+                return null;
+        }
     }
 }

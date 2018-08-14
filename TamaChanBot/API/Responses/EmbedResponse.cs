@@ -10,6 +10,7 @@ namespace TamaChanBot.API.Responses
         public string Author { get; internal set; }
         public string IconUrl { get; internal set; }
         public uint Color { get; internal set; }
+        [JsonProperty]
         internal Message[] messages;
 
         internal EmbedResponse() { }

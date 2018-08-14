@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TamaChanBot.API;
 using TamaChanBot.API.Responses;
@@ -37,7 +38,7 @@ namespace TamaChanBot.Core
                 {
                     await SendErrorResponse("Invalid parameter.", argNullEx.ParamName, socketMessage.Channel);
                 }
-                catch (TargetParameterCountException tarParCountEx)
+                catch (TargetParameterCountException)
                 {
                     await SendErrorResponse("Not enough parameters.", "You're missing a couple of parameters for this command.", socketMessage.Channel);
                 }
@@ -64,17 +65,30 @@ namespace TamaChanBot.Core
             object[] parsedParameters = new object[parameters.Length];
             for (int i = 0; i < parameters.Length; i++)
             {
-                parsedParameters[i] = GetParameter(ref unparsedParameters, parameters[i]);
+                ParameterInfo nextParameter = null;
+                if (i < parameters.Length - 1)
+                    nextParameter = parameters[i + 1];
+
+                parsedParameters[i] = GetParameter(ref unparsedParameters, parameters[i], nextParameter);
             }
             return parsedParameters;
         }
 
-        private object GetParameter(ref string unparsedParameters, ParameterInfo parameterInfo)
+        private object GetParameter(ref string unparsedParameters, ParameterInfo parameterInfo, ParameterInfo nextParameter)
         {
-            TypeCode typeCode = Type.GetTypeCode(parameterInfo.ParameterType);
+            bool isOptional = parameterInfo.HasDefaultValue || parameterInfo.IsOptional;
+            if (nextParameter == null)
+                isOptional = parameterInfo.GetCustomAttribute<ParamArrayAttribute>() != null;
+            return GetParameter(ref unparsedParameters, parameterInfo.ParameterType, isOptional, parameterInfo.DefaultValue, nextParameter);
+        }
+
+        private object GetParameter(ref string unparsedParameters, Type parameterType, bool isOptional, object defaultValue, ParameterInfo nextParameter)
+        {
+            TypeCode typeCode = Type.GetTypeCode(parameterType);
             if(typeCode == TypeCode.Object)
             {
-                throw new NotImplementedException();
+                if (parameterType.IsArray)
+                    return ParseArrayParameter(ref unparsedParameters, parameterType.GetElementType(), isOptional);
             }
             else if(typeCode == TypeCode.String)
             {
@@ -93,12 +107,43 @@ namespace TamaChanBot.Core
                     unparsedParameters = unparsedParameters.Remove(0, unparsedSoleParameter.Length + 1);
 
                 if (typeCode == TypeCode.Boolean)
-                    return ParseBooleanParameter(unparsedSoleParameter, parameterInfo.HasDefaultValue, parameterInfo.DefaultValue);
+                    return ParseBooleanParameter(unparsedSoleParameter, isOptional, defaultValue);
                 else
-                    return GetNumericParameter(unparsedSoleParameter, parameterInfo.HasDefaultValue, parameterInfo.DefaultValue, typeCode);
+                    return GetNumericParameter(unparsedSoleParameter, isOptional, defaultValue, typeCode);
             }
 
             return null;
+        }
+
+        private Array ParseArrayParameter(ref string unparsedParameters, Type arrayType, bool isOptional)
+        {
+            TamaChan.Instance.Logger.LogInfo("Test");
+            List<object> objectList = new List<object>();
+            try
+            {
+                while (unparsedParameters != null && unparsedParameters.Length > 0)
+                {
+                    object member = GetParameter(ref unparsedParameters, arrayType, false, null, null);
+                    objectList.Add(member);
+                }
+            }
+            catch { }
+            finally
+            {
+                if (objectList.Count == 0)
+                {
+                    if (isOptional)
+                        objectList = null;
+                    else
+                        throw new TargetParameterCountException();
+                }
+            }
+            if (objectList == null)
+                return null;
+            object[] abstractArray = objectList.ToArray();
+            Array concreteArray = Array.CreateInstance(arrayType, abstractArray.Length);
+            Array.Copy(abstractArray, concreteArray, concreteArray.Length);
+            return concreteArray;
         }
         
         private bool ParseBooleanParameter(string unparsedParameter, bool isOptional, object defaultValue)

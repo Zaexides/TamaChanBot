@@ -21,6 +21,8 @@ namespace CoreModule
         [Command("Add")]
         public EmbedResponse AddCommand(int a, int b, params int[] additionalAdditions)
         {
+            additionalAdditions = additionalAdditions ?? new int[0];
+
             string title = $"{a} + {b}";
             int result = a + b;
             foreach (int aa in additionalAdditions)

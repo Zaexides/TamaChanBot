@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Linq;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using TamaChanBot.API;
 using TamaChanBot.API.Responses;
@@ -9,7 +7,7 @@ using Discord.WebSocket;
 
 namespace TamaChanBot.Core
 {
-    public sealed class CommandInvoker
+    public sealed partial class CommandInvoker
     {
         private ResponseHandler responseHandler = new ResponseHandler();
         private readonly string[] booleanTrueTerms = new string[]
@@ -90,13 +88,15 @@ namespace TamaChanBot.Core
                 if (parameterType.IsArray)
                 {
                     bool nextParameterIsNumeric = false;
-                    if(nextParameter != null)
+                    if (nextParameter != null)
                     {
                         int typeCodeIndex = (int)Type.GetTypeCode(nextParameter.ParameterType);
                         nextParameterIsNumeric = typeCodeIndex >= 5 && typeCodeIndex <= 15;
                     }
                     return ParseArrayParameter(ref unparsedParameters, parameterType.GetElementType(), isOptional, nextParameterIsNumeric);
                 }
+                else
+                    throw new NotImplementedException();
             }
             else if(typeCode == TypeCode.String)
             {
@@ -121,96 +121,6 @@ namespace TamaChanBot.Core
             }
 
             return null;
-        }
-
-        private Array ParseArrayParameter(ref string unparsedParameters, Type arrayType, bool isOptional, bool nextParameterIsNumeric)
-        {
-            TamaChan.Instance.Logger.LogInfo("Test");
-            List<object> objectList = new List<object>();
-            string unparsedParametersBackup = unparsedParameters;
-            try
-            {
-                while (unparsedParameters != null && unparsedParameters.Length > 0)
-                {
-                    unparsedParametersBackup = unparsedParameters;
-                    object member = GetParameter(ref unparsedParameters, arrayType, false, null, null);
-                    if(Type.GetTypeCode(arrayType) == TypeCode.Char && nextParameterIsNumeric)
-                    {
-                        if(char.IsNumber((char)member))
-                        {
-                            unparsedParameters = unparsedParametersBackup;
-                            break;
-                        }
-                    }
-                    objectList.Add(member);
-                }
-            }
-            catch
-            {
-                unparsedParameters = unparsedParametersBackup;
-            }
-            finally
-            {
-
-                if (objectList.Count == 0)
-                {
-                    if (isOptional)
-                        objectList = null;
-                    else
-                        throw new TargetParameterCountException();
-                }
-            }
-            if (objectList == null)
-                return null;
-            object[] abstractArray = objectList.ToArray();
-            Array concreteArray = Array.CreateInstance(arrayType, abstractArray.Length);
-            Array.Copy(abstractArray, concreteArray, concreteArray.Length);
-            return concreteArray;
-        }
-        
-        private bool ParseBooleanParameter(string unparsedParameter, bool isOptional, object defaultValue)
-        {
-            bool isEmpty = unparsedParameter == null || unparsedParameter.Equals(string.Empty);
-
-            if (!isEmpty)
-            {
-                string lcPar = unparsedParameter.ToLower();
-                if (booleanTrueTerms.Contains(lcPar))
-                    return true;
-                else if (booleanFalseTerms.Contains(lcPar))
-                    return false;
-            }
-
-            if (isOptional)
-                return (bool)defaultValue;
-            else if (isEmpty)
-                throw new TargetParameterCountException();
-            else
-                throw new ArgumentNullException($"\"{unparsedParameter}\" is not a valid answer.");
-        }
-
-        private object GetNumericParameter(string unparsedParameter, bool isOptional, object defaultValue, TypeCode typeCode)
-        {
-            object value;
-            try
-            {
-                value = Convert.ChangeType(unparsedParameter, typeCode);
-            }
-            catch
-            {
-                if (isOptional)
-                    value = defaultValue;
-                else if (unparsedParameter == null || unparsedParameter.Equals(string.Empty))
-                    throw new TargetParameterCountException();
-                else
-                {
-                    string laymanTranslation = "number";
-                    if (typeCode == TypeCode.Char)
-                        laymanTranslation = "character";
-                    throw new ArgumentNullException($"\"{unparsedParameter}\" is not a valid {laymanTranslation}.");
-                }
-            }
-            return value;
         }
     }
 }

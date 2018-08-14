@@ -140,7 +140,10 @@
     <Compile Include="API\ModuleAttribute.cs" />
     <Compile Include="API\Permission.cs" />
     <Compile Include="API\TamaChanModule.cs" />
-    <Compile Include="Core\CommandInvoker.cs" />
+    <Compile Include="Core\CommandInvoker\CommandInvoker.cs" />
+    <Compile Include="Core\CommandInvoker\ParseArray.cs" />
+    <Compile Include="Core\CommandInvoker\ParseBoolean.cs" />
+    <Compile Include="Core\CommandInvoker\ParseNumericValue.cs" />
     <Compile Include="Core\CommandRegistry.cs" />
     <Compile Include="Core\ModuleRegistry.cs" />
     <Compile Include="Core\EventSystem.cs" />

@@ -15,7 +15,7 @@ namespace CoreModule
         [Command("Ping")]
         public MessageResponse PingCommand()
         {
-            return new MessageResponse("Pong! As an object...");
+            return new MessageResponse($"Pong! As an object...");
         }
 
         [Command("Add")]

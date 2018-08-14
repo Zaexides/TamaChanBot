@@ -88,7 +88,15 @@ namespace TamaChanBot.Core
             if(typeCode == TypeCode.Object)
             {
                 if (parameterType.IsArray)
-                    return ParseArrayParameter(ref unparsedParameters, parameterType.GetElementType(), isOptional);
+                {
+                    bool nextParameterIsNumeric = false;
+                    if(nextParameter != null)
+                    {
+                        int typeCodeIndex = (int)Type.GetTypeCode(nextParameter.ParameterType);
+                        nextParameterIsNumeric = typeCodeIndex >= 5 && typeCodeIndex <= 15;
+                    }
+                    return ParseArrayParameter(ref unparsedParameters, parameterType.GetElementType(), isOptional, nextParameterIsNumeric);
+                }
             }
             else if(typeCode == TypeCode.String)
             {
@@ -115,21 +123,35 @@ namespace TamaChanBot.Core
             return null;
         }
 
-        private Array ParseArrayParameter(ref string unparsedParameters, Type arrayType, bool isOptional)
+        private Array ParseArrayParameter(ref string unparsedParameters, Type arrayType, bool isOptional, bool nextParameterIsNumeric)
         {
             TamaChan.Instance.Logger.LogInfo("Test");
             List<object> objectList = new List<object>();
+            string unparsedParametersBackup = unparsedParameters;
             try
             {
                 while (unparsedParameters != null && unparsedParameters.Length > 0)
                 {
+                    unparsedParametersBackup = unparsedParameters;
                     object member = GetParameter(ref unparsedParameters, arrayType, false, null, null);
+                    if(Type.GetTypeCode(arrayType) == TypeCode.Char && nextParameterIsNumeric)
+                    {
+                        if(char.IsNumber((char)member))
+                        {
+                            unparsedParameters = unparsedParametersBackup;
+                            break;
+                        }
+                    }
                     objectList.Add(member);
                 }
             }
-            catch { }
+            catch
+            {
+                unparsedParameters = unparsedParametersBackup;
+            }
             finally
             {
+
                 if (objectList.Count == 0)
                 {
                     if (isOptional)

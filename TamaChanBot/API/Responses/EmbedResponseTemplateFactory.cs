@@ -8,7 +8,7 @@ namespace TamaChanBot.API.Responses
         private const int TEMPLATE_SYSTEM_MESSAGE_START = (int)EmbedResponseTemplate.Error;
         private const int TEMPLATE_SYSTEM_MESSAGE_END = (int)EmbedResponseTemplate.Warning;
 
-        private const uint COLOR_DEFAULT = 0x656C8E;
+        private const uint COLOR_DEFAULT = 0x90A2DD;
         private const uint COLOR_YELLOW = 0xECDD00;
         private const uint COLOR_RED = 0xEC1F1F;
 

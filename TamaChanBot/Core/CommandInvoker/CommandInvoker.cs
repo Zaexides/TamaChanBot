@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using TamaChanBot.API;
@@ -36,9 +37,10 @@ namespace TamaChanBot.Core
                 {
                     await SendErrorResponse("Invalid parameter.", argNullEx.ParamName, socketMessage.Channel);
                 }
-                catch (TargetParameterCountException)
+                catch (TargetParameterCountException tarParCountEx)
                 {
                     await SendErrorResponse("Not enough parameters.", "You're missing a couple of parameters for this command.", socketMessage.Channel);
+                    TamaChan.Instance.Logger.LogWarning($"Error details: {tarParCountEx.ToString()}");
                 }
                 catch(Exception ex)
                 {
@@ -76,7 +78,7 @@ namespace TamaChanBot.Core
         {
             bool isOptional = parameterInfo.HasDefaultValue || parameterInfo.IsOptional;
             if (nextParameter == null)
-                isOptional = parameterInfo.GetCustomAttribute<ParamArrayAttribute>() != null;
+                isOptional = isOptional || parameterInfo.GetCustomAttribute<ParamArrayAttribute>() != null;
             return GetParameter(ref unparsedParameters, parameterInfo.ParameterType, isOptional, parameterInfo.DefaultValue, nextParameter);
         }
 
@@ -96,7 +98,7 @@ namespace TamaChanBot.Core
                     return ParseArrayParameter(ref unparsedParameters, parameterType.GetElementType(), isOptional, nextParameterIsNumeric);
                 }
                 else
-                    throw new NotImplementedException();
+                    return ParseObject(ref unparsedParameters, parameterType, isOptional, defaultValue, nextParameter);
             }
             else if(typeCode == TypeCode.String)
             {
@@ -114,6 +116,7 @@ namespace TamaChanBot.Core
                 else
                     unparsedParameters = unparsedParameters.Remove(0, unparsedSoleParameter.Length + 1);
 
+                unparsedSoleParameter = new string(unparsedSoleParameter.Where(c => !Char.IsWhiteSpace(c)).ToArray());
                 if (typeCode == TypeCode.Boolean)
                     return ParseBooleanParameter(unparsedSoleParameter, isOptional, defaultValue);
                 else

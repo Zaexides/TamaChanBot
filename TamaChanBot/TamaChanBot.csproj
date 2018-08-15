@@ -144,6 +144,7 @@
     <Compile Include="Core\CommandInvoker\CommandInvoker.cs" />
     <Compile Include="Core\CommandInvoker\ParseArray.cs" />
     <Compile Include="Core\CommandInvoker\ParseBoolean.cs" />
+    <Compile Include="Core\CommandInvoker\ParseString.cs" />
     <Compile Include="Core\CommandInvoker\ParseNumericValue.cs" />
     <Compile Include="Core\CommandInvoker\ParseObject.cs" />
     <Compile Include="Core\CommandRegistry.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\StringHelper.cs" />
     <Compile Include="Utility\TokenNotSetException.cs" />
+    <Compile Include="Utility\TypeCodeHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

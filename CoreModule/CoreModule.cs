@@ -45,6 +45,12 @@ namespace CoreModule
             return $"Result of ({argumentObject.value} {(argumentObject.toLeft ? "<<" : ">>")} {argumentObject.amount}) {(overflow ? "with" : "without")} overflow: {argumentObject.Execute(overflow)}.";
         }
 
+        [Command("Echo")]
+        public string Echo(MessageContext context)
+        {
+            return $"Message: \"{context.parameterString}\".";
+        }
+
         public class ByteShiftArgument : IParameterParser
         {
             public byte value, amount;

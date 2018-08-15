@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using TamaChanBot.API;
 using TamaChanBot.API.Responses;
+using TamaChanBot.Utility;
 using Discord.WebSocket;
 
 namespace TamaChanBot.Core
@@ -30,7 +31,7 @@ namespace TamaChanBot.Core
             {
                 try
                 {
-                    object[] parameters = GetParameters(messageContext.parameterString, command.method.GetParameters());
+                    object[] parameters = GetParameters(messageContext.parameterString, command.method.GetParameters(), messageContext);
                     await responseHandler.Respond(command.Invoke(parameters), socketMessage.Channel);
                 }
                 catch (ArgumentNullException argNullEx)
@@ -57,7 +58,7 @@ namespace TamaChanBot.Core
             await responseHandler.Respond(builder.Build(), channel);
         }
 
-        private object[] GetParameters(string unparsedParameters, ParameterInfo[] parameters)
+        private object[] GetParameters(string unparsedParameters, ParameterInfo[] parameters, MessageContext messageContext)
         {
             if (unparsedParameters == null)
                 unparsedParameters = string.Empty;
@@ -69,20 +70,20 @@ namespace TamaChanBot.Core
                 if (i < parameters.Length - 1)
                     nextParameter = parameters[i + 1];
 
-                parsedParameters[i] = GetParameter(ref unparsedParameters, parameters[i], nextParameter);
+                parsedParameters[i] = GetParameter(ref unparsedParameters, parameters[i], nextParameter, messageContext);
             }
             return parsedParameters;
         }
 
-        private object GetParameter(ref string unparsedParameters, ParameterInfo parameterInfo, ParameterInfo nextParameter)
+        private object GetParameter(ref string unparsedParameters, ParameterInfo parameterInfo, ParameterInfo nextParameter, MessageContext messageContext)
         {
             bool isOptional = parameterInfo.HasDefaultValue || parameterInfo.IsOptional;
             if (nextParameter == null)
                 isOptional = isOptional || parameterInfo.GetCustomAttribute<ParamArrayAttribute>() != null;
-            return GetParameter(ref unparsedParameters, parameterInfo.ParameterType, isOptional, parameterInfo.DefaultValue, nextParameter);
+            return GetParameter(ref unparsedParameters, parameterInfo.ParameterType, isOptional, parameterInfo.DefaultValue, nextParameter, messageContext);
         }
 
-        private object GetParameter(ref string unparsedParameters, Type parameterType, bool isOptional, object defaultValue, ParameterInfo nextParameter)
+        private object GetParameter(ref string unparsedParameters, Type parameterType, bool isOptional, object defaultValue, ParameterInfo nextParameter, MessageContext messageContext)
         {
             TypeCode typeCode = Type.GetTypeCode(parameterType);
             if(typeCode == TypeCode.Object)
@@ -91,18 +92,15 @@ namespace TamaChanBot.Core
                 {
                     bool nextParameterIsNumeric = false;
                     if (nextParameter != null)
-                    {
-                        int typeCodeIndex = (int)Type.GetTypeCode(nextParameter.ParameterType);
-                        nextParameterIsNumeric = typeCodeIndex >= 5 && typeCodeIndex <= 15;
-                    }
-                    return ParseArrayParameter(ref unparsedParameters, parameterType.GetElementType(), isOptional, nextParameterIsNumeric);
+                        nextParameterIsNumeric = Type.GetTypeCode(nextParameter.ParameterType).IsNumeric();
+                    return ParseArrayParameter(ref unparsedParameters, parameterType.GetElementType(), isOptional, nextParameterIsNumeric, messageContext);
                 }
                 else
-                    return ParseObject(ref unparsedParameters, parameterType, isOptional, defaultValue, nextParameter);
+                    return ParseObject(ref unparsedParameters, parameterType, isOptional, defaultValue, nextParameter, messageContext);
             }
             else if(typeCode == TypeCode.String)
             {
-                throw new NotImplementedException();
+                return ParseString(ref unparsedParameters, isOptional, defaultValue, nextParameter);
             }
             else if((int)typeCode >= (int)TypeCode.Boolean && (int)typeCode <= (int)TypeCode.Decimal)
             {
@@ -116,7 +114,7 @@ namespace TamaChanBot.Core
                 else
                     unparsedParameters = unparsedParameters.Remove(0, unparsedSoleParameter.Length + 1);
 
-                unparsedSoleParameter = new string(unparsedSoleParameter.Where(c => !Char.IsWhiteSpace(c)).ToArray());
+                unparsedSoleParameter = new string(unparsedSoleParameter.Where(c => !char.IsWhiteSpace(c)).ToArray());
                 if (typeCode == TypeCode.Boolean)
                     return ParseBooleanParameter(unparsedSoleParameter, isOptional, defaultValue);
                 else

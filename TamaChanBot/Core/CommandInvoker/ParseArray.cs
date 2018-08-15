@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using TamaChanBot.API;
 
 namespace TamaChanBot.Core
 {
     public sealed partial class CommandInvoker
     {
-        private Array ParseArrayParameter(ref string unparsedParameters, Type arrayType, bool isOptional, bool nextParameterIsNumeric)
+        private Array ParseArrayParameter(ref string unparsedParameters, Type arrayType, bool isOptional, bool nextParameterIsNumeric, MessageContext messageContext)
         {
             TamaChan.Instance.Logger.LogInfo("Test");
             List<object> objectList = new List<object>();
@@ -16,7 +17,7 @@ namespace TamaChanBot.Core
                 while (unparsedParameters != null && unparsedParameters.Length > 0)
                 {
                     unparsedParametersBackup = unparsedParameters;
-                    object member = GetParameter(ref unparsedParameters, arrayType, false, null, null);
+                    object member = GetParameter(ref unparsedParameters, arrayType, false, null, null, messageContext);
                     if (Type.GetTypeCode(arrayType) == TypeCode.Char && nextParameterIsNumeric)
                     {
                         if (char.IsNumber((char)member))

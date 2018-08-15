@@ -7,9 +7,11 @@ namespace TamaChanBot.Core
 {
     public partial class CommandInvoker
     {
-        public object ParseObject(ref string unparsedParameters, Type parameterType, bool isOptional, object defaultValue, ParameterInfo nextParameter)
+        public object ParseObject(ref string unparsedParameters, Type parameterType, bool isOptional, object defaultValue, ParameterInfo nextParameter, MessageContext messageContext)
         {
-            if (parameterType.GetInterfaces().Contains(typeof(IParameterParser)))
+            if (parameterType.Equals(typeof(MessageContext)))
+                return messageContext;
+            else if (parameterType.GetInterfaces().Contains(typeof(IParameterParser)))
             {
                 object instance = Activator.CreateInstance(parameterType);
                 (instance as IParameterParser).ParseParameter(ref unparsedParameters, isOptional, defaultValue, nextParameter);

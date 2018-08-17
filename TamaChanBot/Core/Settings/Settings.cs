@@ -1,9 +1,9 @@
 ﻿
 namespace TamaChanBot.Core.Settings
 {
-    public abstract class Settings<T> where T:Settings<T>
+    public abstract class Settings
     {
-        public abstract T LoadFromFile(string filepath);
+        public abstract Settings LoadFromFile(string filepath);
         public abstract void SaveToFile(string filepath);
     }
 }

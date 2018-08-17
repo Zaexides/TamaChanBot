@@ -5,7 +5,7 @@ using TamaChanBot.Utility;
 
 namespace TamaChanBot.Core.Settings
 {
-    public sealed class BotSettings : Settings<BotSettings>
+    public sealed class BotSettings : Settings
     {
         public BotToken botToken;
         public string commandPrefix = "t.";
@@ -13,7 +13,7 @@ namespace TamaChanBot.Core.Settings
         public string botName = "Tama Chan";
         public ulong[] ownerUUIDs = new ulong[] { 0 };
 
-        public override BotSettings LoadFromFile(string filepath)
+        public override Settings LoadFromFile(string filepath)
         {
             BotSettings botSettings = null;
             try

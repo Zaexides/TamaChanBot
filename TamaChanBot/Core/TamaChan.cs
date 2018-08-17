@@ -28,7 +28,7 @@ namespace TamaChanBot.Core
         {
             Instance = this;
             Logger = new Logger("Main");
-            botSettings = new BotSettings().LoadFromFile(BOT_SETTINGS_PATH);
+            botSettings = new BotSettings().LoadFromFile(BOT_SETTINGS_PATH) as BotSettings;
             Logger.allowSystemBeeps = botSettings.allowErrorBeeps;
             client = new DiscordSocketClient();
             EventSystem = new EventSystem(client);

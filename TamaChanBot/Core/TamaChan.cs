@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using TamaChanBot.Core.Settings;
@@ -8,7 +9,6 @@ namespace TamaChanBot.Core
 {
     public sealed class TamaChan
     {
-        private const string BOT_SETTINGS_PATH = @"Settings\bot_settings.json";
         private const int RECONNECT_DELAY = 10000;
 
         private DiscordSocketClient client;
@@ -21,20 +21,28 @@ namespace TamaChanBot.Core
         public EventSystem EventSystem { get; private set; }
         public ModuleRegistry ModuleRegistry { get; private set; }
         public CommandRegistry CommandRegistry { get; private set; }
-        
+
+        public AutoSaver AutoSaver { get; private set; }
+        private CancellationTokenSource autoSaverCancelTokenSource;
+
         internal Logger Logger { get; private set; }
 
         public TamaChan()
         {
             Instance = this;
             Logger = new Logger("Main");
-            botSettings = new BotSettings().LoadFromFile(BOT_SETTINGS_PATH) as BotSettings;
+            AutoSaver = new AutoSaver();
+            botSettings = new BotSettings().LoadFromFile() as BotSettings;
             Logger.allowSystemBeeps = botSettings.allowErrorBeeps;
             client = new DiscordSocketClient();
             EventSystem = new EventSystem(client);
             ModuleRegistry = new ModuleRegistry();
             CommandRegistry = new CommandRegistry();
             ModuleRegistry.RegisterModules();
+
+            autoSaverCancelTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = autoSaverCancelTokenSource.Token;
+            Task.Run(() => AutoSaver.Run(cancellationToken), cancellationToken);
         }
 
         public async Task Start()
@@ -68,6 +76,7 @@ namespace TamaChanBot.Core
 
         public async Task Stop()
         {
+            autoSaverCancelTokenSource.Cancel();
             Logger.LogInfo("Disconnecting...");
             if (client != null && (client.ConnectionState == Discord.ConnectionState.Connected || client.ConnectionState == Discord.ConnectionState.Connecting))
                 await client.StopAsync();
@@ -75,7 +84,7 @@ namespace TamaChanBot.Core
             if (botSettings != null)
             {
                 Logger.LogInfo("Saving Bot Settings...");
-                botSettings.SaveToFile(BOT_SETTINGS_PATH);
+                botSettings.SaveToFile();
             }
             Logger.LogInfo("Stopped succesfully!");
         }

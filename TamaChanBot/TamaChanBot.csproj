@@ -152,6 +152,7 @@
     <Compile Include="Core\EventSystem.cs" />
     <Compile Include="Core\Logger.cs" />
     <Compile Include="Core\ResponseHandler.cs" />
+    <Compile Include="Core\Settings\AutoSaver.cs" />
     <Compile Include="Core\Settings\BotSettings.cs" />
     <Compile Include="Core\Settings\Settings.cs" />
     <Compile Include="Core\TamaChan.cs" />

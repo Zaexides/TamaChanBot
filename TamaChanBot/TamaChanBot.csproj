@@ -135,6 +135,7 @@
     <Compile Include="API\Responses\EmbedResponseTemplateFactory.cs" />
     <Compile Include="API\Responses\MessageResponse.cs" />
     <Compile Include="API\Responses\Response.cs" />
+    <Compile Include="API\UserData.cs" />
     <Compile Include="Core\Command.cs" />
     <Compile Include="API\CommandAttribute.cs" />
     <Compile Include="API\MessageContext.cs" />
@@ -155,6 +156,7 @@
     <Compile Include="Core\Settings\AutoSaver.cs" />
     <Compile Include="Core\Settings\BotSettings.cs" />
     <Compile Include="Core\Settings\Settings.cs" />
+    <Compile Include="Core\Settings\UserSettings.cs" />
     <Compile Include="Core\TamaChan.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

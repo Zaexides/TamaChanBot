@@ -16,9 +16,16 @@ namespace CoreModule
         }
 
         [Command("Ping")]
-        public MessageResponse PingCommand()
+        public MessageResponse PingCommand(MessageContext context)
         {
-            return new MessageResponse($"Pong! As an object...");
+            UserDataCoreModule userDataCoreModule = GetUserData<UserDataCoreModule>(context.authorId);
+            userDataCoreModule = userDataCoreModule ?? new UserDataCoreModule();
+
+            userDataCoreModule.pinged++;
+
+            SaveUserData(context.authorId, userDataCoreModule);
+
+            return new MessageResponse($"Pong! You've pinged {userDataCoreModule.pinged} times.");
         }
 
         [Command("Add")]
@@ -90,6 +97,11 @@ namespace CoreModule
                 else
                     throw new ArgumentNullException($"\"{split[0]}\" and \"{split[1]}\" aren't both numbers ranging from 0-255.");
             }
+        }
+
+        public class UserDataCoreModule : UserData
+        {
+            public int pinged = 0;
         }
     }
 }

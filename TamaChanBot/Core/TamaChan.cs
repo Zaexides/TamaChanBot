@@ -16,6 +16,7 @@ namespace TamaChanBot.Core
         private bool reconnect = true;
 
         public BotSettings botSettings;
+        public UserSettings userSettings;
 
         public static TamaChan Instance { get; private set; }
         public EventSystem EventSystem { get; private set; }
@@ -39,6 +40,7 @@ namespace TamaChanBot.Core
             ModuleRegistry = new ModuleRegistry();
             CommandRegistry = new CommandRegistry();
             ModuleRegistry.RegisterModules();
+            userSettings = new UserSettings().LoadFromFile() as UserSettings;
 
             autoSaverCancelTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = autoSaverCancelTokenSource.Token;
@@ -85,6 +87,11 @@ namespace TamaChanBot.Core
             {
                 Logger.LogInfo("Saving Bot Settings...");
                 botSettings.SaveToFile();
+            }
+            if(userSettings != null)
+            {
+                Logger.LogInfo("Saving User Settings...");
+                userSettings.SaveToFile();
             }
             Logger.LogInfo("Stopped succesfully!");
         }

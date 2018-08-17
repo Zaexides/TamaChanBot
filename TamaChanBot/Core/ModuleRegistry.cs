@@ -70,6 +70,7 @@ namespace TamaChanBot.Core
             TamaChanModule module = Activator.CreateInstance(moduleType) as TamaChanModule;
             TamaChan.Instance.CommandRegistry.RegisterModuleCommands(module);
             registry.Add(attribute.moduleName, module);
+            module.RegistryName = attribute.moduleName;
             TamaChan.Instance.Logger.LogInfo($"Module \"{attribute.moduleName}\" registered.");
         }
 

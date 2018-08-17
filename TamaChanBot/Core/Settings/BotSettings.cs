@@ -13,8 +13,6 @@ namespace TamaChanBot.Core.Settings
         public string botName = "Tama Chan";
         public ulong[] ownerUUIDs = new ulong[] { 0 };
 
-        public bool flipMe = false;
-
         public BotSettings()
         {
             this.DefaultPath = @"Settings\bot_settings.json";

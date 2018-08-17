@@ -11,6 +11,7 @@ namespace TamaChanBot.Core.Settings
         public string commandPrefix = "t.";
         public bool allowErrorBeeps = true;
         public string botName = "Tama Chan";
+        public ulong[] ownerUUIDs = new ulong[] { 0 };
 
         public override BotSettings LoadFromFile(string filepath)
         {

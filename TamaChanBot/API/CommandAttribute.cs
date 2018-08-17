@@ -9,6 +9,7 @@ namespace TamaChanBot.API
 
         public string Description { get; set; }
         public Permission PermissionFlag { get; set; }
+        public bool BotOwnerOnly { get; set; }
 
         public CommandAttribute(string commandName)
         {

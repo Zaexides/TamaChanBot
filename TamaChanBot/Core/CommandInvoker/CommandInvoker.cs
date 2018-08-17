@@ -27,6 +27,10 @@ namespace TamaChanBot.Core
             Command command = TamaChan.Instance.CommandRegistry[commandName];
             if (command == null)
                 await SendErrorResponse("Command not found.", $"The command \"{commandName}\" was not found.", socketMessage.Channel);
+            else if(socketMessage.Author is SocketGuildUser && !UserCanUseCommand(command, socketMessage.Author as SocketGuildUser))
+            {
+                await SendErrorResponse("Not enough permissions.", "You don't have the permission to use this command.", socketMessage.Channel);
+            }
             else
             {
                 try
@@ -49,6 +53,16 @@ namespace TamaChanBot.Core
                     TamaChan.Instance.Logger.LogError(ex.ToString());
                 }
             }
+        }
+
+        private bool UserCanUseCommand(Command command, SocketGuildUser user)
+        {
+            if(user.GuildPermissions.Administrator || ((ulong)command.permissionFlag & user.GuildPermissions.RawValue) == (ulong)command.permissionFlag)
+            {
+                if (!command.botOwnerOnly || TamaChan.Instance.botSettings.ownerUUIDs.Contains(user.Id))
+                    return true;
+            }
+            return false;
         }
 
         private async Task SendErrorResponse(string errorTitle, string errorMessage, ISocketMessageChannel channel)

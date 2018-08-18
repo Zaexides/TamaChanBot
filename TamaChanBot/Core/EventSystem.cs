@@ -35,7 +35,7 @@ namespace TamaChanBot.Core
             MessageContext context = new MessageContext(arg as SocketUserMessage);
 
             string prefix = TamaChan.Instance.botSettings.commandPrefix;
-            bool isCommand = arg.Content.StartsWith(prefix);
+            bool isCommand = !arg.Author.IsBot && arg.Content.StartsWith(prefix);
 
             messageReceivedEvent?.Invoke(new MessageReceivedArgs(arg as SocketUserMessage, isCommand));
 

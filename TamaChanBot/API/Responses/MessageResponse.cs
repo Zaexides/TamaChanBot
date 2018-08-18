@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Discord.WebSocket;
 
 namespace TamaChanBot.API.Responses
 {
@@ -9,6 +11,11 @@ namespace TamaChanBot.API.Responses
         public MessageResponse(string content)
         {
             this.content = content;
+        }
+
+        internal override async Task Respond(ISocketMessageChannel channel)
+        {
+            await channel.SendMessageAsync(content);
         }
 
         public override string ToString() => content;

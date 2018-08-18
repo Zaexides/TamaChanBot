@@ -35,22 +35,7 @@ namespace TamaChanBot.Core
         public async Task Respond(Response response, ISocketMessageChannel channel)
         {
             TamaChan.Instance.Logger.LogInfo($"Responding with \"{response}\".");
-            if(response is MessageResponse)
-                await channel.SendMessageAsync((response as MessageResponse).content);
-            else if(response is EmbedResponse)
-            {
-                EmbedResponse embedResponse = response as EmbedResponse;
-                EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder.Title = embedResponse.Title;
-                embedBuilder.Color = new Color(embedResponse.Color);
-                embedBuilder.Author = new EmbedAuthorBuilder().WithName(embedResponse.Author)
-                    .WithIconUrl(embedResponse.IconUrl);
-
-                foreach (EmbedResponse.Message m in embedResponse.messages)
-                    embedBuilder.AddField(m.title, m.content);
-
-                await channel.SendMessageAsync(string.Empty, embed: embedBuilder.Build());
-            }
+            await response.Respond(channel);
         }
     }
 }

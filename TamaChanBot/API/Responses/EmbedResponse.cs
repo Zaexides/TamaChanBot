@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Discord.WebSocket;
+using Discord;
 using Newtonsoft.Json;
 
 namespace TamaChanBot.API.Responses
@@ -18,6 +21,20 @@ namespace TamaChanBot.API.Responses
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
+        }
+
+        internal override async Task Respond(ISocketMessageChannel channel)
+        {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.Title = this.Title;
+            embedBuilder.Color = new Color(this.Color);
+            embedBuilder.Author = new EmbedAuthorBuilder().WithName(this.Author)
+                .WithIconUrl(this.IconUrl);
+
+            foreach (Message m in this.messages)
+                embedBuilder.AddField(m.title, m.content);
+
+            await channel.SendMessageAsync(string.Empty, embed: embedBuilder.Build());
         }
 
         public sealed class Builder

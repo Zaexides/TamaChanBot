@@ -18,6 +18,8 @@ namespace TamaChanBot.API
 
         [Obsolete("Usage not recommended.")]
         protected readonly SocketUserMessage wrappedMessage;
+        
+        public bool IsInServer { get => serverId != null; }
 
         public MessageContext(SocketUserMessage message)
         {

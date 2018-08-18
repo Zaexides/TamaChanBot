@@ -25,7 +25,18 @@ namespace CoreModule
 
             SaveUserData(context.authorId, userDataCoreModule);
 
-            return new MessageResponse($"Pong! You've pinged {userDataCoreModule.pinged} times.");
+            string response = $"Pong! You've pinged {userDataCoreModule.pinged} times.";
+
+            if(context.IsInServer)
+            {
+                UserDataCoreModule userDataCoreModuleGuild = GetGuildData<UserDataCoreModule>((ulong)context.serverId);
+                userDataCoreModuleGuild = userDataCoreModuleGuild ?? new UserDataCoreModule();
+                userDataCoreModuleGuild.pinged++;
+                SaveGuildData((ulong)context.serverId, userDataCoreModuleGuild);
+                response += $" This command has been used {userDataCoreModuleGuild.pinged} times in this server now.";
+            }
+
+            return new MessageResponse(response);
         }
 
         [Command("Add")]

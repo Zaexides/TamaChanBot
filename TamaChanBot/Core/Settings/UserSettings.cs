@@ -19,6 +19,8 @@ namespace TamaChanBot.Core.Settings
 
         [JsonProperty]
         private Dictionary<ulong, Dictionary<string, UserData>> storedUserData = new Dictionary<ulong, Dictionary<string, UserData>>();
+        [JsonProperty]
+        private Dictionary<ulong, Dictionary<string, UserData>> storedGuildData = new Dictionary<ulong, Dictionary<string, UserData>>();
 
         public UserSettings()
         {
@@ -28,21 +30,33 @@ namespace TamaChanBot.Core.Settings
         }
 
         public void SaveUserData(TamaChanModule module, ulong userId, UserData userData)
-        {
-            if (!storedUserData.ContainsKey(userId))
-                storedUserData.Add(userId, new Dictionary<string, UserData>());
+            => SaveData(module, userId, userData, storedUserData);
 
-            if (!storedUserData[userId].ContainsKey(module.RegistryName))
-                storedUserData[userId].Add(module.RegistryName, userData);
+        public void SaveGuildData(TamaChanModule module, ulong guildId, UserData userData)
+            => SaveData(module, guildId, userData, storedGuildData);
+
+        private void SaveData(TamaChanModule module, ulong id, UserData data, Dictionary<ulong, Dictionary<string, UserData>> targetDictionary)
+        {
+            if (!targetDictionary.ContainsKey(id))
+                targetDictionary.Add(id, new Dictionary<string, UserData>());
+
+            if (!targetDictionary[id].ContainsKey(module.RegistryName))
+                targetDictionary[id].Add(module.RegistryName, data);
             else
-                storedUserData[userId][module.RegistryName] = userData;
+                targetDictionary[id][module.RegistryName] = data;
             MarkDirty();
         }
 
-        public T GetUserData<T>(TamaChanModule module, ulong userId) where T:UserData
+        public T GetUserData<T>(TamaChanModule module, ulong userId) where T : UserData
+            => GetData<T>(module, userId, storedUserData);
+
+        public T GetGuildData<T>(TamaChanModule module, ulong guildId) where T : UserData
+            => GetData<T>(module, guildId, storedGuildData);
+
+        private T GetData<T>(TamaChanModule module, ulong id, Dictionary<ulong, Dictionary<string, UserData>> targetDictionary) where T:UserData
         {
-            if (storedUserData.ContainsKey(userId) && storedUserData[userId].ContainsKey(module.RegistryName))
-                return (T)storedUserData[userId][module.RegistryName];
+            if (targetDictionary.ContainsKey(id) && targetDictionary[id].ContainsKey(module.RegistryName))
+                return (T)targetDictionary[id][module.RegistryName];
             else
                 return null;
         }

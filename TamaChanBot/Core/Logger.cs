@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TamaChanBot.Core
+namespace TamaChanBot
 {
     public class Logger
     {

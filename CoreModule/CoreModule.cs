@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using TamaChanBot;
 using TamaChanBot.API;
 using TamaChanBot.API.Events;
 using TamaChanBot.API.Responses;
+using TamaChanBot.Core.Settings;
 
 namespace CoreModule
 {
     [Module("TamaChanBot.Core")]
     public class CoreModule : TamaChanModule
     {
-        public static TamaChanBot.Core.Logger logger = new TamaChanBot.Core.Logger("CoreModule");
+        public static Logger logger = new Logger("CoreModule");
+        public static CoreModuleSettings coreModuleSettings = ModuleSettings.LoadOrCreate<CoreModuleSettings>();
 
         public CoreModule()
         {
@@ -19,6 +22,8 @@ namespace CoreModule
         [Command("Echo")]
         public MessageResponse EchoCommand(string message)
         {
+            coreModuleSettings.messages++;
+            coreModuleSettings.MarkDirty();
             return new MessageResponse(message);
         }
 
@@ -114,6 +119,19 @@ namespace CoreModule
         public class UserDataCoreModule : UserData
         {
             public int pinged = 0;
+        }
+
+        public class CoreModuleSettings : ModuleSettings
+        {
+            public int messages = 0;
+
+            public CoreModuleSettings() : this(null)
+            {
+            }
+
+            protected CoreModuleSettings(Logger logger) : base(@"CoreSettings", logger)
+            {
+            }
         }
     }
 }

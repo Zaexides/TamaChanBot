@@ -83,16 +83,7 @@ namespace TamaChanBot.Core
             if (client != null && (client.ConnectionState == Discord.ConnectionState.Connected || client.ConnectionState == Discord.ConnectionState.Connecting))
                 await client.StopAsync();
             Logger.LogInfo("Saving settings...");
-            if (botSettings != null)
-            {
-                Logger.LogInfo("Saving Bot Settings...");
-                botSettings.SaveToFile();
-            }
-            if(userSettings != null)
-            {
-                Logger.LogInfo("Saving User Settings...");
-                userSettings.SaveToFile();
-            }
+            AutoSaver.SaveAll();
             Logger.LogInfo("Stopped succesfully!");
         }
 

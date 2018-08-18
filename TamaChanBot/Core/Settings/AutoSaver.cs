@@ -29,23 +29,40 @@ namespace TamaChanBot.Core.Settings
                 while(saveQueue.Count > 0 && !cancellationToken.IsCancellationRequested)
                 {
                     SaveScheduleInfo scheduleInfo = saveQueue.Dequeue();
-                    logger.LogInfo($"Saving \"{scheduleInfo.path}\".");
-                    try
-                    {
-                        CreateBackup(scheduleInfo.path);
-                        scheduleInfo.settings.SaveToFile(scheduleInfo.path);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError($"An error occured while trying to save \"{scheduleInfo.settings}\" to \"{scheduleInfo.path}\":\r\n{ex.ToString()}");
-                    }
+                    Save(scheduleInfo);
                 }
             }
             logger.LogInfo("Auto-saving service stopped.");
         }
 
+        public void SaveAll()
+        {
+            while(saveQueue.Count > 0)
+            {
+                SaveScheduleInfo scheduleInfo = saveQueue.Dequeue();
+                Save(scheduleInfo);
+            }
+            logger.LogInfo($"Saving done.");
+        }
+
+        private void Save(SaveScheduleInfo scheduleInfo)
+        {
+            logger.LogInfo($"Saving \"{scheduleInfo.settings.GetType().FullName}\" to \"{scheduleInfo.path}\"...");
+            try
+            {
+                CreateBackup(scheduleInfo.path);
+                scheduleInfo.settings.SaveToFile(scheduleInfo.path);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"An error occured while trying to save \"{scheduleInfo.settings}\" to \"{scheduleInfo.path}\":\r\n{ex.ToString()}");
+            }
+        }
+
         private void CreateBackup(string originalFilePath)
         {
+            if (!File.Exists(originalFilePath))
+                return;
             string backupFilePath = BACKUP_FOLDER + originalFilePath;
             FileInfo backupFileInfo = new FileInfo(backupFilePath);
             if (!backupFileInfo.Directory.Exists)

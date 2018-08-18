@@ -32,7 +32,14 @@ namespace TamaChanBot.Core.Settings
             {
                 TamaChan.Instance.Logger.LogError("Failed to deserialize BotSettings class: " + ex.ToString());
             }
-            return botSettings == null ? new BotSettings() : botSettings;
+
+            if(botSettings == null)
+            {
+                TamaChan.Instance.Logger.LogInfo("No bot settings found, creating.");
+                botSettings = new BotSettings();
+                botSettings.MarkDirty();
+            }
+            return botSettings;
         }
 
         public override void SaveToFile(string filepath)

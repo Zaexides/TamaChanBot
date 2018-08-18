@@ -135,6 +135,7 @@
     <Compile Include="API\Events\MessageReceivedArgs.cs" />
     <Compile Include="API\GuildData.cs" />
     <Compile Include="API\IParameterParser.cs" />
+    <Compile Include="API\ModuleSettings.cs" />
     <Compile Include="API\Responses\EmbedResponse.cs" />
     <Compile Include="API\Responses\EmbedResponseTemplateFactory.cs" />
     <Compile Include="API\Responses\MessageResponse.cs" />

@@ -1,5 +1,7 @@
 ﻿#pragma warning disable CS0618 //Disable Obsolete warning.
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using Discord.WebSocket;
 
 namespace TamaChanBot.API
@@ -15,6 +17,10 @@ namespace TamaChanBot.API
         public readonly bool sentByBot;
         public readonly ulong? channelId;
         public readonly ulong? serverId;
+
+        public IReadOnlyCollection<ulong> mentionedUserIds;
+        public IReadOnlyCollection<ulong> mentionedRoleIds;
+        public IReadOnlyCollection<ulong> mentionedChannelIds;
 
         [Obsolete("Usage not recommended.")]
         protected readonly SocketUserMessage wrappedMessage;
@@ -37,6 +43,10 @@ namespace TamaChanBot.API
                 this.serverId = (message.Channel as SocketGuildChannel).Guild.Id;
             }
             this.wrappedMessage = message;
+
+            this.mentionedUserIds = message.MentionedUsers.Select(u => u.Id).ToList().AsReadOnly();
+            this.mentionedRoleIds = message.MentionedRoles.Select(r => r.Id).ToList().AsReadOnly();
+            this.mentionedChannelIds = message.MentionedChannels.Select(c => c.Id).ToList().AsReadOnly();
         }
 
         public override string ToString()

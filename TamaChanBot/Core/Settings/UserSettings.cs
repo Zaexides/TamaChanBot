@@ -143,8 +143,8 @@ namespace TamaChanBot.Core.Settings
         {
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(REGISTRY_SOFTWARE, true);
             registryKey = registryKey.CreateSubKey(REGISTRY_APP_NAME, true);
-            registryKey.SetValue(REGISTRY_ENC_KEY_NAME, key);
-            registryKey.SetValue(REGISTRY_ENC_IV_NAME, iV);
+            registryKey.SetValue(REGISTRY_ENC_KEY_NAME, ProtectedData.Protect(key, null, DataProtectionScope.CurrentUser));
+            registryKey.SetValue(REGISTRY_ENC_IV_NAME, ProtectedData.Protect(iV, null, DataProtectionScope.CurrentUser));
         }
 
         private bool LoadEncryptionInfoFromRegistry(out byte[] key, out byte[] iV)
@@ -157,8 +157,8 @@ namespace TamaChanBot.Core.Settings
                 iV = null;
                 return false;
             }
-            key = (byte[])registryKey.GetValue(REGISTRY_ENC_KEY_NAME);
-            iV = (byte[])registryKey.GetValue(REGISTRY_ENC_IV_NAME);
+            key = ProtectedData.Unprotect((byte[])registryKey.GetValue(REGISTRY_ENC_KEY_NAME), null, DataProtectionScope.CurrentUser);
+            iV = ProtectedData.Unprotect((byte[])registryKey.GetValue(REGISTRY_ENC_IV_NAME), null, DataProtectionScope.CurrentUser);
 
             return true;
         }

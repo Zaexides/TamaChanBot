@@ -3,12 +3,16 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using TamaChanBot.API;
+using TamaChanBot.API.Events;
 
 namespace TamaChanBot.Core
 {
     public sealed class EventSystem
     {
         private CommandInvoker commandInvoker;
+
+        public delegate Task MessageReceived(MessageReceivedArgs messageReceivedArgs);
+        internal event MessageReceived messageReceivedEvent;
 
         internal EventSystem(DiscordSocketClient client)
         {
@@ -28,12 +32,15 @@ namespace TamaChanBot.Core
             if (!(arg is SocketUserMessage))
                 return;
 
+            MessageContext context = new MessageContext(arg as SocketUserMessage);
+
             string prefix = TamaChan.Instance.botSettings.commandPrefix;
-            if(arg.Content.StartsWith(prefix))
-            {
-                MessageContext context = new MessageContext(arg as SocketUserMessage);
+            bool isCommand = arg.Content.StartsWith(prefix);
+
+            messageReceivedEvent?.Invoke(new MessageReceivedArgs(arg as SocketUserMessage, isCommand));
+
+            if (isCommand)
                 await commandInvoker.InvokeCommand(arg.Content.Split(' ')[0].Remove(0, prefix.Length), context, arg as SocketUserMessage);
-            }
         }
     }
 }

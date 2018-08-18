@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using TamaChanBot.API;
+using TamaChanBot.API.Events;
 using TamaChanBot.API.Responses;
 
 namespace CoreModule
@@ -13,6 +14,12 @@ namespace CoreModule
 
         public CoreModule()
         {
+        }
+
+        [Command("Echo")]
+        public MessageResponse EchoCommand(string message)
+        {
+            return new MessageResponse(message);
         }
 
         [Command("Ping")]
@@ -61,12 +68,6 @@ namespace CoreModule
         public string ShiftCommand(ByteShiftArgument argumentObject, bool overflow = false)
         {
             return $"Result of ({argumentObject.value} {(argumentObject.toLeft ? "<<" : ">>")} {argumentObject.amount}) {(overflow ? "with" : "without")} overflow: {argumentObject.Execute(overflow)}.";
-        }
-
-        [Command("Echo")]
-        public string Echo(MessageContext context)
-        {
-            return $"Message: \"{context.parameterString}\".";
         }
 
         public class ByteShiftArgument : IParameterParser

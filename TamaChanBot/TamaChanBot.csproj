@@ -131,6 +131,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\Events\IMessageReceiver.cs" />
+    <Compile Include="API\Events\MessageReceivedArgs.cs" />
     <Compile Include="API\GuildData.cs" />
     <Compile Include="API\IParameterParser.cs" />
     <Compile Include="API\Responses\EmbedResponse.cs" />

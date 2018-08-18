@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using TamaChanBot.API;
+using TamaChanBot.API.Events;
 using TamaChanBot.Utility;
 
 namespace TamaChanBot.Core
@@ -70,8 +71,17 @@ namespace TamaChanBot.Core
             TamaChanModule module = Activator.CreateInstance(moduleType) as TamaChanModule;
             TamaChan.Instance.CommandRegistry.RegisterModuleCommands(module);
             registry.Add(attribute.moduleName, module);
+            RegisterModuleEventHandling(module);
             module.RegistryName = attribute.moduleName;
             TamaChan.Instance.Logger.LogInfo($"Module \"{attribute.moduleName}\" registered.");
+        }
+
+        private void RegisterModuleEventHandling(TamaChanModule module)
+        {
+            EventSystem eventSystem = TamaChan.Instance.EventSystem;
+
+            if (module is IMessageReceiver)
+                eventSystem.messageReceivedEvent += (module as IMessageReceiver).OnMessageReceived;
         }
 
         private Assembly[] LoadAssemblies()

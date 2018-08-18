@@ -47,18 +47,18 @@ namespace TamaChanBot.Core.Settings
             MarkDirty();
         }
 
-        public T GetUserData<T>(TamaChanModule module, ulong userId) where T : UserData
+        public T GetUserData<T>(TamaChanModule module, ulong userId) where T : UserData, new()
             => GetData<T>(module, userId, storedUserData);
 
-        public T GetGuildData<T>(TamaChanModule module, ulong guildId) where T : UserData
+        public T GetGuildData<T>(TamaChanModule module, ulong guildId) where T : UserData, new()
             => GetData<T>(module, guildId, storedGuildData);
 
-        private T GetData<T>(TamaChanModule module, ulong id, Dictionary<ulong, Dictionary<string, UserData>> targetDictionary) where T:UserData
+        private T GetData<T>(TamaChanModule module, ulong id, Dictionary<ulong, Dictionary<string, UserData>> targetDictionary) where T:UserData, new()
         {
             if (targetDictionary.ContainsKey(id) && targetDictionary[id].ContainsKey(module.RegistryName))
                 return (T)targetDictionary[id][module.RegistryName];
             else
-                return null;
+                return new T();
         }
         
         public override Settings LoadFromFile(string filepath)

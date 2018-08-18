@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TamaChanBot;
 using TamaChanBot.API;
@@ -18,5 +18,19 @@ namespace CoreModule
         {
         }
 
+        [Command("Increment")]
+        public string IncrementCommand(MessageContext context)
+        {
+            UserDataCore userData = GetUserData<UserDataCore>(context.authorId);
+            userData.myValue++;
+            SaveUserData(context.authorId, userData);
+
+            return $"It's now {userData.myValue}.";
+        }
+
+        public class UserDataCore : UserData
+        {
+            public int myValue = 0;
+        }
     }
 }

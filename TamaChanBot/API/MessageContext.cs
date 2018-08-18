@@ -17,13 +17,14 @@ namespace TamaChanBot.API
         public readonly bool sentByBot;
         public readonly ulong? channelId;
         public readonly ulong? serverId;
+        public readonly ulong messageId;
 
         public IReadOnlyCollection<ulong> mentionedUserIds;
         public IReadOnlyCollection<ulong> mentionedRoleIds;
         public IReadOnlyCollection<ulong> mentionedChannelIds;
 
         [Obsolete("Usage not recommended.")]
-        protected readonly SocketUserMessage wrappedMessage;
+        public readonly SocketUserMessage wrappedMessage;
         
         public bool IsInServer { get => serverId != null; }
 
@@ -47,6 +48,8 @@ namespace TamaChanBot.API
             this.mentionedUserIds = message.MentionedUsers.Select(u => u.Id).ToList().AsReadOnly();
             this.mentionedRoleIds = message.MentionedRoles.Select(r => r.Id).ToList().AsReadOnly();
             this.mentionedChannelIds = message.MentionedChannels.Select(c => c.Id).ToList().AsReadOnly();
+
+            this.messageId = message.Id;
         }
 
         public override string ToString()

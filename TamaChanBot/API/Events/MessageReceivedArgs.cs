@@ -11,8 +11,12 @@ namespace TamaChanBot.API.Events
         public readonly ulong? serverId;
         public readonly bool isCommand;
 
+        internal SocketUserMessage userMessage;
+
         internal MessageReceivedArgs(SocketUserMessage userMessage, bool isCommand)
         {
+            this.userMessage = userMessage;
+
             this.content = userMessage.Content;
             this.userId = userMessage.Author.Id;
 
@@ -24,5 +28,7 @@ namespace TamaChanBot.API.Events
 
             this.isCommand = isCommand;
         }
+
+        public MessageContext CreateMessageContext() => new MessageContext(this.userMessage);
     }
 }

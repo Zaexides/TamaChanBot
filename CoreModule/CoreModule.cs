@@ -32,10 +32,10 @@ namespace CoreModule
 
                     MessageContext context = messageReceivedArgs.CreateMessageContext();
                     DeleteResponse deleteResponse = new DeleteResponse(context);
-                    SendResponse(deleteResponse, context);
+                    await SendResponse(deleteResponse, context);
                     EmbedResponse.Builder builder = new EmbedResponse.Builder(EmbedResponseTemplate.Info);
                     builder.AddMessage("Pong!", $"My latency is {difference}ms.");
-                    SendResponse(builder.Build(), context);
+                    await SendResponse(builder.Build(), context);
                 }
             }
         }

@@ -25,6 +25,7 @@ namespace TamaChanBot.Core
         {
             TamaChan.Instance.Logger.LogInfo($"Received command \"{commandName}\". Details:\r\n{messageContext}");
             Command command = TamaChan.Instance.CommandRegistry[commandName];
+
             if (command == null)
                 await SendErrorResponse("Command not found.", $"The command \"{commandName}\" was not found.", socketMessage.Channel);
             else if(socketMessage.Author is SocketGuildUser && !UserCanUseCommand(command, socketMessage.Author as SocketGuildUser))

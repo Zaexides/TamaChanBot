@@ -55,7 +55,8 @@ namespace CoreModule
 
         [Command("Google")]
         public EmbedResponse GoogleCommand(string query) => googleCommand.Execute(query);
-        [Command("Wiki")]
+        [Command("Wikipedia")]
+        [AltCommand("Wiki")]
         public EmbedResponse WikiCommand(string query) => wikipediaCommand.Execute(query);
     }
 }

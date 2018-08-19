@@ -13,10 +13,15 @@ namespace CoreModule
     {
         public static Logger logger = new Logger("CoreModule");
         public static TamaChanModule instance;
+        internal CoreModuleSettings settings;
+
+        private GoogleCommand googleCommand;
 
         public CoreModule()
         {
             instance = this;
+            settings = CoreModuleSettings.LoadOrCreate<CoreModuleSettings>(CoreModuleSettings.DEFAULT_PATH);
+            googleCommand = new GoogleCommand(settings.google);
         }
 
         public async Task OnMessageReceived(MessageReceivedArgs messageReceivedArgs)
@@ -45,5 +50,8 @@ namespace CoreModule
         {
             return $"Pong {((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds()}";
         }
+
+        [Command("Google")]
+        public EmbedResponse GoogleCommand(string query) => googleCommand.Execute(query);
     }
 }

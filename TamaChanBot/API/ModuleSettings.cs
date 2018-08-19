@@ -35,6 +35,8 @@ namespace TamaChanBot.API
             Settings loadedSettings = emptySettings.LoadFromFile();
             if (loadedSettings != null)
                 emptySettings = loadedSettings as T;
+            else
+                emptySettings.MarkDirty();
             emptySettings.SetDefaultPath(fileName);
             emptySettings.logger = logger;
             return emptySettings;

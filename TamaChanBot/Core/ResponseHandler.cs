@@ -34,7 +34,36 @@ namespace TamaChanBot.Core
                 TypeCode typeCode = Type.GetTypeCode(response.GetType());
                 if(typeCode == TypeCode.Object)
                 {
-                    throw new NotImplementedException();
+                    if (response.GetType().IsArray)
+                    {
+                        Array array = response as Array;
+                        if (array.Length == 0)
+                            await Respond(new MessageResponse("No result."), channel);
+                        else if (response.GetType().GetElementType().IsAssignableFrom(typeof(Response)))
+                        {
+                            foreach (object r in array)
+                                await Respond(r as Response, channel);
+                        }
+                        else
+                        {
+                            string responseString = string.Empty;
+                            for (int i = 0; i < array.Length; i++)
+                            {
+                                object element = array.GetValue(i);
+                                if (element != null)
+                                    responseString += $"[{element.ToString()}]";
+                                else
+                                    responseString += "null";
+
+                                if (i < array.Length - 1)
+                                    responseString += ", ";
+                            }
+
+                            await Respond(new MessageResponse(responseString), channel);
+                        }
+                    }
+                    else
+                        await Respond(new MessageResponse(response.ToString()), channel);
                 }
                 else if(typeCode == TypeCode.DateTime)
                 {

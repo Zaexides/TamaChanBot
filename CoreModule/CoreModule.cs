@@ -5,57 +5,45 @@ using TamaChanBot;
 using TamaChanBot.API;
 using TamaChanBot.API.Events;
 using TamaChanBot.API.Responses;
-using TamaChanBot.Core.Settings;
 
 namespace CoreModule
 {
     [Module("TamaChanBot.Core")]
-    public class CoreModule : TamaChanModule
+    public class CoreModule : TamaChanModule, IMessageReceiver
     {
         public static Logger logger = new Logger("CoreModule");
         public static TamaChanModule instance;
-        public MyModuleData moduleData;
 
         public CoreModule()
         {
             instance = this;
-            moduleData = MyModuleData.LoadOrCreate<MyModuleData>("settings");
         }
 
-        [Command("Increment")]
-        public string IncrementCommand(MessageContext context)
+        public async Task OnMessageReceived(MessageReceivedArgs messageReceivedArgs)
         {
-            MyUserData myUserData = MyUserData.LoadOrCreate<MyUserData>(context.authorId, logger);
-            myUserData.myValue++;
-            myUserData.MarkDirty();
+            if(messageReceivedArgs.userId.Equals(BotID))
+            {
+                string[] splitContent = messageReceivedArgs.content.Split(' ');
+                if(splitContent.Length == 2 && splitContent[0] == "Pong")
+                {
+                    long oldTimestamp = long.Parse(splitContent[1]);
+                    long newTimestamp = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
+                    long difference = newTimestamp - oldTimestamp;
 
-            moduleData.globalValue++;
-            moduleData.MarkDirty();
-
-            return $"It's now {myUserData.myValue}. Globally it's {moduleData.globalValue}.";
+                    MessageContext context = messageReceivedArgs.CreateMessageContext();
+                    DeleteResponse deleteResponse = new DeleteResponse(context);
+                    SendResponse(deleteResponse, context);
+                    EmbedResponse.Builder builder = new EmbedResponse.Builder(EmbedResponseTemplate.Info);
+                    builder.AddMessage("Pong!", $"My latency is {difference}ms.");
+                    SendResponse(builder.Build(), context);
+                }
+            }
         }
 
-        public class MyUserData : ModuleUserSettings
+        [Command("Ping")]
+        public string PingCommand(MessageContext context)
         {
-            public int myValue = 0;
-
-            protected override TamaChanModule ParentModule => CoreModule.instance;
-            protected override bool IsGuildSettings => false;
-            protected override byte[] EncryptionEntropy => new byte[] { 53, 69, 20, 143 };
-
-            public MyUserData() : base() { }
-
-            public MyUserData(ulong id, Logger logger) : base(id, logger) { }
-        }
-
-        public class MyModuleData : ModuleSettings
-        {
-            public int globalValue = 12;
-
-            protected override TamaChanModule ParentModule => CoreModule.instance;
-
-            public MyModuleData() : base(null) { }
-            public MyModuleData(Logger logger) : base("settings", logger) { }
+            return $"Pong {((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds()}";
         }
     }
 }

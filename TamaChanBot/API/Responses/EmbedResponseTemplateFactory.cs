@@ -6,12 +6,13 @@ namespace TamaChanBot.API.Responses
     internal static class EmbedResponseTemplateFactory
     {
         private const int TEMPLATE_SYSTEM_MESSAGE_START = (int)EmbedResponseTemplate.Error;
-        private const int TEMPLATE_SYSTEM_MESSAGE_END = (int)EmbedResponseTemplate.Warning;
+        private const int TEMPLATE_SYSTEM_MESSAGE_END = (int)EmbedResponseTemplate.Info;
 
         private const uint COLOR_DEFAULT = 0x90A2DD;
         private const uint COLOR_YELLOW = 0xECDD00;
         private const uint COLOR_RED = 0xEC1F1F;
 
+        private const string TITLE_INFO = "Info";
         private const string TITLE_WARNING = "Warning";
         private const string TITLE_ERROR = "Error";
 
@@ -49,6 +50,8 @@ namespace TamaChanBot.API.Responses
                     return TITLE_WARNING;
                 case EmbedResponseTemplate.Error:
                     return TITLE_ERROR;
+                case EmbedResponseTemplate.Info:
+                    return TITLE_INFO;
                 default:
                     return string.Empty;
             }
@@ -61,5 +64,6 @@ namespace TamaChanBot.API.Responses
 
         Error = 20,
         Warning = 21,
+        Info = 22,
     }
 }

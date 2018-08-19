@@ -16,12 +16,14 @@ namespace CoreModule
         internal CoreModuleSettings settings;
 
         private GoogleCommand googleCommand;
+        private WikipediaSearchCommand wikipediaCommand;
 
         public CoreModule()
         {
             instance = this;
             settings = CoreModuleSettings.LoadOrCreate<CoreModuleSettings>(CoreModuleSettings.DEFAULT_PATH);
             googleCommand = new GoogleCommand(settings.google);
+            wikipediaCommand = new WikipediaSearchCommand();
         }
 
         public async Task OnMessageReceived(MessageReceivedArgs messageReceivedArgs)
@@ -53,5 +55,7 @@ namespace CoreModule
 
         [Command("Google")]
         public EmbedResponse GoogleCommand(string query) => googleCommand.Execute(query);
+        [Command("Wiki")]
+        public EmbedResponse WikiCommand(string query) => wikipediaCommand.Execute(query);
     }
 }

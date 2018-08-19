@@ -59,6 +59,7 @@
     <Compile Include="CoreModuleSettings.cs" />
     <Compile Include="GoogleCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WikipediaSearchCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TamaChanBot\TamaChanBot.csproj">

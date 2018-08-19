@@ -11,6 +11,8 @@ namespace CoreModule
     [Module("TamaChanBot.Core")]
     public class CoreModule : TamaChanModule, IMessageReceiver
     {
+        private const string INVITE_LINK_FORMAT = "https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot&permissions=66186303";
+
         public static Logger logger = new Logger("CoreModule");
         public static TamaChanModule instance;
         internal CoreModuleSettings settings;
@@ -60,6 +62,12 @@ namespace CoreModule
                 return new MessageAttachementResponse(string.Empty, TamaChanBot.Core.HelpFileGenerator.NSFW_HELP_FILE_PATH);
             else
                 return new MessageAttachementResponse(string.Empty, TamaChanBot.Core.HelpFileGenerator.HELP_FILE_PATH);
+        }
+
+        [Command("Invite", Description = "Sends an invite link.")]
+        public string InviteCommand()
+        {
+            return string.Format(INVITE_LINK_FORMAT, BotID);
         }
 
         [Command("Google", Description = "Searches the specified query on Google.")]

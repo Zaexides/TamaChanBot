@@ -47,15 +47,24 @@ namespace CoreModule
             }
         }
 
-        [Command("Ping")]
+        [Command("Ping", Description = "Shows the bot's latency.")]
         public string PingCommand(MessageContext context)
         {
             return $"Pong {((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds()}";
         }
 
-        [Command("Google")]
+        [Command("Help", Description = "Sends the help file. In NSFW channels or DMs, it'll also show NSFW commands.")]
+        public MessageAttachementResponse HelpCommand(MessageContext messageContext)
+        {
+            if (messageContext.isNSFWChannel)
+                return new MessageAttachementResponse(string.Empty, TamaChanBot.Core.HelpFileGenerator.NSFW_HELP_FILE_PATH);
+            else
+                return new MessageAttachementResponse(string.Empty, TamaChanBot.Core.HelpFileGenerator.HELP_FILE_PATH);
+        }
+
+        [Command("Google", Description = "Searches the specified query on Google.")]
         public EmbedResponse GoogleCommand(string query) => googleCommand.Execute(query);
-        [Command("Wikipedia")]
+        [Command("Wikipedia", Description = "Looks up the specified article query on Wikipedia.")]
         [AltCommand("Wiki")]
         public EmbedResponse WikiCommand(string query) => wikipediaCommand.Execute(query);
     }

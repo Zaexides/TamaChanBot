@@ -8,8 +8,8 @@ namespace TamaChanBot.Core
 {
     public class HelpFileGenerator
     {
-        private const string HELP_FILE_PATH = @"Data\Help.txt";
-        private const string NSFW_HELP_FILE_PATH = @"data\HelpNSFW.txt";
+        public const string HELP_FILE_PATH = @"Data\Help.txt";
+        public const string NSFW_HELP_FILE_PATH = @"data\HelpNSFW.txt";
 
         public List<Command> commands = new List<Command>();
 

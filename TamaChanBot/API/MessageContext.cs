@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Discord;
 using Discord.WebSocket;
 
 namespace TamaChanBot.API
@@ -18,6 +19,7 @@ namespace TamaChanBot.API
         public readonly ulong? channelId;
         public readonly ulong? serverId;
         public readonly ulong messageId;
+        public readonly bool isNSFWChannel;
 
         public IReadOnlyCollection<ulong> mentionedUserIds;
         public IReadOnlyCollection<ulong> mentionedRoleIds;
@@ -42,14 +44,19 @@ namespace TamaChanBot.API
             {
                 this.channelId = (message.Channel as SocketGuildChannel).Id;
                 this.serverId = (message.Channel as SocketGuildChannel).Guild.Id;
+                if (message.Channel is ITextChannel)
+                    this.isNSFWChannel = (message.Channel as ITextChannel).IsNsfw;
+                else if (message.Channel is IDMChannel)
+                    this.isNSFWChannel = true;
             }
-            this.wrappedMessage = message;
 
             this.mentionedUserIds = message.MentionedUsers.Select(u => u.Id).ToList().AsReadOnly();
             this.mentionedRoleIds = message.MentionedRoles.Select(r => r.Id).ToList().AsReadOnly();
             this.mentionedChannelIds = message.MentionedChannels.Select(c => c.Id).ToList().AsReadOnly();
 
             this.messageId = message.Id;
+
+            this.wrappedMessage = message;
         }
 
         public override string ToString()

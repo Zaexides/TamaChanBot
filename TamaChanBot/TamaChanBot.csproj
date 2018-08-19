@@ -140,6 +140,7 @@
     <Compile Include="API\Responses\DeleteResponse.cs" />
     <Compile Include="API\Responses\EmbedResponse.cs" />
     <Compile Include="API\Responses\EmbedResponseTemplateFactory.cs" />
+    <Compile Include="API\Responses\MessageAttachementResponse.cs" />
     <Compile Include="API\Responses\MessageResponse.cs" />
     <Compile Include="API\Responses\Response.cs" />
     <Compile Include="Core\Command.cs" />

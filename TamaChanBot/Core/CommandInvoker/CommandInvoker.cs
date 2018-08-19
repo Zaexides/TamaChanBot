@@ -6,6 +6,7 @@ using TamaChanBot.API;
 using TamaChanBot.API.Responses;
 using TamaChanBot.Utility;
 using Discord.WebSocket;
+using Discord;
 
 namespace TamaChanBot.Core
 {
@@ -31,6 +32,10 @@ namespace TamaChanBot.Core
             else if(socketMessage.Author is SocketGuildUser && !UserCanUseCommand(command, socketMessage.Author as SocketGuildUser))
             {
                 await SendErrorResponse("Not enough permissions.", "You don't have the permission to use this command.", socketMessage.Channel);
+            }
+            else if(command.isNsfw && !(socketMessage.Channel is IDMChannel) && !((socketMessage.Channel is ITextChannel) && (socketMessage.Channel as ITextChannel).IsNsfw))
+            {
+                await SendErrorResponse("Not allowed here.", "This is a NSFW command and is only allowed in NSFW channels or DMs.", socketMessage.Channel);
             }
             else
             {

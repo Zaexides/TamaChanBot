@@ -9,6 +9,8 @@ namespace TamaChanBot.API
     {
         [JsonIgnore]
         protected Logger logger;
+        [JsonIgnore]
+        protected abstract TamaChanModule ParentModule { get; }
 
         protected ModuleSettings(string defaultFilePath, Logger logger) : this(defaultFilePath)
         {
@@ -17,13 +19,25 @@ namespace TamaChanBot.API
 
         protected ModuleSettings(string defaultFilePath) : base()
         {
-            this.DefaultPath = $@"Settings\Modules\{defaultFilePath}.json";
+            SetDefaultPath(defaultFilePath);
         }
 
-        public static T LoadOrCreate<T>() where T:ModuleSettings, new()
+        private void SetDefaultPath(string defaultFilePath)
+        {
+            this.DefaultPath = $@"Settings\Modules\{ParentModule.RegistryName}\{defaultFilePath}.json";
+        }
+
+        public static T LoadOrCreate<T>(string fileName, Logger logger = null) where T:ModuleSettings, new()
         {
             T emptySettings = new T();
-            return emptySettings.LoadFromFile() as T;
+            emptySettings.SetDefaultPath(fileName);
+
+            Settings loadedSettings = emptySettings.LoadFromFile();
+            if (loadedSettings != null)
+                emptySettings = loadedSettings as T;
+            emptySettings.SetDefaultPath(fileName);
+            emptySettings.logger = logger;
+            return emptySettings;
         }
 
         public override Settings LoadFromFile(string filepath)

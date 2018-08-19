@@ -14,10 +14,12 @@ namespace CoreModule
     {
         public static Logger logger = new Logger("CoreModule");
         public static TamaChanModule instance;
+        public MyModuleData moduleData;
 
         public CoreModule()
         {
             instance = this;
+            moduleData = MyModuleData.LoadOrCreate<MyModuleData>("settings");
         }
 
         [Command("Increment")]
@@ -27,7 +29,10 @@ namespace CoreModule
             myUserData.myValue++;
             myUserData.MarkDirty();
 
-            return $"It's now {myUserData.myValue}.";
+            moduleData.globalValue++;
+            moduleData.MarkDirty();
+
+            return $"It's now {myUserData.myValue}. Globally it's {moduleData.globalValue}.";
         }
 
         public class MyUserData : ModuleUserSettings
@@ -41,6 +46,16 @@ namespace CoreModule
             public MyUserData() : base() { }
 
             public MyUserData(ulong id, Logger logger) : base(id, logger) { }
+        }
+
+        public class MyModuleData : ModuleSettings
+        {
+            public int globalValue = 12;
+
+            protected override TamaChanModule ParentModule => CoreModule.instance;
+
+            public MyModuleData() : base(null) { }
+            public MyModuleData(Logger logger) : base("settings", logger) { }
         }
     }
 }

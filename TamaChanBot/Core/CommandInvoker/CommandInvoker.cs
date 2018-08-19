@@ -44,7 +44,7 @@ namespace TamaChanBot.Core
                 }
                 catch (TargetParameterCountException tarParCountEx)
                 {
-                    await SendErrorResponse("Not enough parameters.", "You're missing a couple of parameters for this command.", socketMessage.Channel);
+                    await SendMissingParametersErrorResponse(command, commandName, socketMessage.Channel);
                     TamaChan.Instance.Logger.LogWarning($"Error details: {tarParCountEx.ToString()}");
                 }
                 catch(Exception ex)
@@ -69,6 +69,18 @@ namespace TamaChanBot.Core
         {
             EmbedResponse.Builder builder = new EmbedResponse.Builder(EmbedResponseTemplate.Error);
             builder.AddMessage(errorTitle, errorMessage);
+            await responseHandler.Respond(builder.Build(), channel);
+        }
+
+        private async Task SendMissingParametersErrorResponse(Command command, string commandName, ISocketMessageChannel channel)
+        {
+            EmbedResponse.Builder builder = new EmbedResponse.Builder(EmbedResponseTemplate.Error);
+            builder.AddMessage("Not enough parameters.", "You are missing some parameters.");
+            ParameterInfo[] parameters = command.method.GetParameters();
+            string usage = $"{TamaChan.Instance.botSettings.commandPrefix}{commandName}";
+            foreach (ParameterInfo pi in parameters)
+                usage += $" {pi.Name}";
+            builder.AddMessage("Usage:", usage);
             await responseHandler.Respond(builder.Build(), channel);
         }
 

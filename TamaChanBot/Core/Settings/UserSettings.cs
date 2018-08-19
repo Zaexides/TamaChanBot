@@ -8,7 +8,7 @@ using TamaChanBot.API;
 
 namespace TamaChanBot.Core.Settings
 {
-    public sealed class UserSettings : Settings
+    public abstract class UserSettings : Settings
     {
         private const string REGISTRY_SOFTWARE = "Software";
         private const string REGISTRY_APP_NAME = "TamaChan";
@@ -17,51 +17,19 @@ namespace TamaChanBot.Core.Settings
 
         private readonly JsonSerializerSettings serializerSettings;
 
-        [JsonProperty]
-        private Dictionary<ulong, Dictionary<string, UserData>> storedUserData = new Dictionary<ulong, Dictionary<string, UserData>>();
-        [JsonProperty]
-        private Dictionary<ulong, Dictionary<string, UserData>> storedGuildData = new Dictionary<ulong, Dictionary<string, UserData>>();
+        protected abstract byte[] EncryptionEntropy { get; }
+        internal abstract string RegistrySub { get; }
 
-        public UserSettings()
+        protected UserSettings() : this(false, 0) { }
+
+        public UserSettings(bool isGuild, ulong id)
         {
-            DefaultPath = @"Settings\user_settings";
+            DefaultPath = $@"Settings\{(isGuild ? "Guild" : "User")}\{id}";
             serializerSettings = new JsonSerializerSettings();
             serializerSettings.TypeNameHandling = TypeNameHandling.Auto;
         }
-
-        public void SaveUserData(TamaChanModule module, ulong userId, UserData userData)
-            => SaveData(module, userId, userData, storedUserData);
-
-        public void SaveGuildData(TamaChanModule module, ulong guildId, UserData userData)
-            => SaveData(module, guildId, userData, storedGuildData);
-
-        private void SaveData(TamaChanModule module, ulong id, UserData data, Dictionary<ulong, Dictionary<string, UserData>> targetDictionary)
-        {
-            if (!targetDictionary.ContainsKey(id))
-                targetDictionary.Add(id, new Dictionary<string, UserData>());
-
-            if (!targetDictionary[id].ContainsKey(module.RegistryName))
-                targetDictionary[id].Add(module.RegistryName, data);
-            else
-                targetDictionary[id][module.RegistryName] = data;
-            MarkDirty();
-        }
-
-        public T GetUserData<T>(TamaChanModule module, ulong userId) where T : UserData, new()
-            => GetData<T>(module, userId, storedUserData);
-
-        public T GetGuildData<T>(TamaChanModule module, ulong guildId) where T : UserData, new()
-            => GetData<T>(module, guildId, storedGuildData);
-
-        private T GetData<T>(TamaChanModule module, ulong id, Dictionary<ulong, Dictionary<string, UserData>> targetDictionary) where T:UserData, new()
-        {
-            if (targetDictionary.ContainsKey(id) && targetDictionary[id].ContainsKey(module.RegistryName))
-                return (T)targetDictionary[id][module.RegistryName];
-            else
-                return new T();
-        }
         
-        public override Settings LoadFromFile(string filepath)
+        public override sealed Settings LoadFromFile(string filepath)
         {
             UserSettings userSettings = null;
             try
@@ -71,17 +39,17 @@ namespace TamaChanBot.Core.Settings
                     byte[] encryptedFileContents = File.ReadAllBytes(filepath);
                     string json = DecryptJson(encryptedFileContents);
                     if (json != string.Empty)
-                        userSettings = JsonConvert.DeserializeObject<UserSettings>(json, serializerSettings);
+                        userSettings = JsonConvert.DeserializeObject(json, GetType(), serializerSettings) as UserSettings;
                 }
             }
             catch (Exception ex)
             {
-                TamaChan.Instance.Logger.LogError("Failed to deserialize UserSettings class: " + ex.ToString());
+                TamaChan.Instance.Logger.LogError($"Failed to deserialize \"{GetType().FullName}\" class: " + ex.ToString());
             }
-            return userSettings == null ? new UserSettings() : userSettings;
+            return userSettings;
         }
 
-        public override void SaveToFile(string filepath)
+        public override sealed void SaveToFile(string filepath)
         {
             try
             {
@@ -95,7 +63,7 @@ namespace TamaChanBot.Core.Settings
             }
             catch (Exception ex)
             {
-                TamaChan.Instance.Logger.LogError("Failed to serialize UserSettings class: " + ex.ToString());
+                TamaChan.Instance.Logger.LogError($"Failed to serialize \"{GetType().FullName}\" class: " + ex.ToString());
             }
         }
 
@@ -157,6 +125,7 @@ namespace TamaChanBot.Core.Settings
         {
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(REGISTRY_SOFTWARE, true);
             registryKey = registryKey.CreateSubKey(REGISTRY_APP_NAME, true);
+            registryKey = registryKey.CreateSubKey(RegistrySub, true);
             registryKey.SetValue(REGISTRY_ENC_KEY_NAME, ProtectedData.Protect(key, null, DataProtectionScope.CurrentUser));
             registryKey.SetValue(REGISTRY_ENC_IV_NAME, ProtectedData.Protect(iV, null, DataProtectionScope.CurrentUser));
         }
@@ -164,7 +133,8 @@ namespace TamaChanBot.Core.Settings
         private bool LoadEncryptionInfoFromRegistry(out byte[] key, out byte[] iV)
         {
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(REGISTRY_SOFTWARE, false);
-            registryKey = registryKey.OpenSubKey(REGISTRY_APP_NAME);
+            registryKey = registryKey.OpenSubKey(REGISTRY_APP_NAME, false);
+            registryKey = registryKey.OpenSubKey(RegistrySub, false);
             if (registryKey == null)
             {
                 key = null;

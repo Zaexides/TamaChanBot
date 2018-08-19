@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using TamaChanBot.API;
 
 namespace TamaChanBot.Core.Settings
 {
@@ -52,6 +53,8 @@ namespace TamaChanBot.Core.Settings
             {
                 CreateBackup(scheduleInfo.path);
                 scheduleInfo.settings.SaveToFile(scheduleInfo.path);
+                if (scheduleInfo.settings is ModuleUserSettings)
+                    (scheduleInfo.settings as ModuleUserSettings).OnSave();
             }
             catch (Exception ex)
             {

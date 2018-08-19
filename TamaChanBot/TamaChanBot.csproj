@@ -155,6 +155,7 @@
     <Compile Include="Core\CommandInvoker\ParseNumericValue.cs" />
     <Compile Include="Core\CommandInvoker\ParseObject.cs" />
     <Compile Include="Core\CommandRegistry.cs" />
+    <Compile Include="Core\HelpFileGenerator.cs" />
     <Compile Include="Core\ModuleRegistry.cs" />
     <Compile Include="Core\EventSystem.cs" />
     <Compile Include="Core\Logger.cs" />

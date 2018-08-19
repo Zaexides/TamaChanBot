@@ -80,7 +80,10 @@ namespace TamaChanBot.Core
             ParameterInfo[] parameters = command.method.GetParameters();
             string usage = $"{TamaChan.Instance.botSettings.commandPrefix}{commandName}";
             foreach (ParameterInfo pi in parameters)
-                usage += $" {pi.Name}";
+            {
+                if(!pi.ParameterType.IsAssignableFrom(typeof(MessageContext)))
+                    usage += $" {pi.Name}";
+            }
             builder.AddMessage("Usage:", usage);
             await responseHandler.Respond(builder.Build(), channel);
         }

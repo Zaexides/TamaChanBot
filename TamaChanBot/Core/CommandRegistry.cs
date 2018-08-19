@@ -24,7 +24,7 @@ namespace TamaChanBot.Core
             }
         }
 
-        public void RegisterModuleCommands(TamaChanModule module)
+        public void RegisterModuleCommands(TamaChanModule module, HelpFileGenerator helpFileGenerator)
         {
             MethodInfo[] methods = module.GetType().GetMethods();
 
@@ -33,16 +33,21 @@ namespace TamaChanBot.Core
                 CommandAttribute attribute = m.GetCustomAttribute<CommandAttribute>();
                 if(attribute != null)
                 {
-                    Command command = new Command(m, attribute.PermissionFlag, attribute.BotOwnerOnly, module);
+                    Command command = new Command(attribute.commandName, m, attribute.PermissionFlag, attribute.BotOwnerOnly, attribute.IsNSFW, module);
                     RegisterCommand(module, attribute.commandName, command);
 
-                    IEnumerable<AltCommandAttribute> altCommandAttributes = m.GetCustomAttributes<AltCommandAttribute>();
-                    foreach(AltCommandAttribute alt in altCommandAttributes)
+                    if (registry.ContainsKey(attribute.commandName.ToLower()))
                     {
-                        if (!alt.commandName.IsRegistryValid())
-                            TamaChan.Instance.Logger.LogWarning($"Alt command \"{alt.commandName}\" for \"{attribute.commandName}\" is not valid. Ignored.");
-                        else
-                            altCommandRegistry.Add(alt.commandName.ToLower(), attribute.commandName.ToLower());
+                        IEnumerable<AltCommandAttribute> altCommandAttributes = m.GetCustomAttributes<AltCommandAttribute>();
+                        foreach (AltCommandAttribute alt in altCommandAttributes)
+                        {
+                            if (!alt.commandName.IsRegistryValid())
+                                TamaChan.Instance.Logger.LogWarning($"Alt command \"{alt.commandName}\" for \"{attribute.commandName}\" is not valid. Ignored.");
+                            else
+                                altCommandRegistry.Add(alt.commandName.ToLower(), attribute.commandName.ToLower());
+                        }
+                        command.Description = attribute.Description;
+                        helpFileGenerator.commands.Add(command);
                     }
                 }
             }

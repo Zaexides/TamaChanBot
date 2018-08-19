@@ -22,11 +22,13 @@ namespace TamaChanBot.Core
                 throw new DirectoryNotFoundException($"Directory \"{MODULE_LIBRARY_PATH}\" did not exist. Created it instead. Please add in modules there.");
             }
             TamaChan.Instance.Logger.LogInfo("Registering modules...");
+            HelpFileGenerator helpFileGenerator = new HelpFileGenerator();
             Assembly[] assemblies = LoadAssemblies();
-            RegisterModules(assemblies);
+            RegisterModules(assemblies, helpFileGenerator);
+            helpFileGenerator.Generate();
         }
 
-        private void RegisterModules(Assembly[] assemblies)
+        private void RegisterModules(Assembly[] assemblies, HelpFileGenerator helpFileGenerator)
         {
             foreach(Assembly assembly in assemblies)
             {
@@ -42,7 +44,7 @@ namespace TamaChanBot.Core
                         {
                             try
                             {
-                                RegisterModule(type, moduleAttribute);
+                                RegisterModule(type, moduleAttribute, helpFileGenerator);
                             }
                             catch (Exception ex)
                             {
@@ -56,7 +58,7 @@ namespace TamaChanBot.Core
             }
         }
 
-        private void RegisterModule(Type moduleType, ModuleAttribute attribute)
+        private void RegisterModule(Type moduleType, ModuleAttribute attribute, HelpFileGenerator helpFileGenerator)
         {
             if (attribute.moduleName == string.Empty || attribute.moduleName == null)
                 throw new ArgumentException("Module name can not be null or an empty string.");
@@ -69,7 +71,7 @@ namespace TamaChanBot.Core
             TamaChan.Instance.Logger.LogInfo(logString + "...");
 
             TamaChanModule module = Activator.CreateInstance(moduleType) as TamaChanModule;
-            TamaChan.Instance.CommandRegistry.RegisterModuleCommands(module);
+            TamaChan.Instance.CommandRegistry.RegisterModuleCommands(module, helpFileGenerator);
             registry.Add(attribute.moduleName, module);
             RegisterModuleEventHandling(module);
             module.RegistryName = attribute.moduleName;

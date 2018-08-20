@@ -11,7 +11,7 @@ namespace CoreModule
     [Module("TamaChanBot.Core")]
     public class CoreModule : TamaChanModule, IMessageReceiver
     {
-        private const string INVITE_LINK_FORMAT = "https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot&permissions=66186303";
+        private const string INVITE_LINK_FORMAT = "https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot&permissions=-1";
 
         public static Logger logger = new Logger("CoreModule");
         public static TamaChanModule instance;

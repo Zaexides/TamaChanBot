@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\AltCommandAttribute.cs" />
+    <Compile Include="API\Events\IConnectionStatusReceiver.cs" />
     <Compile Include="API\Events\IMessageReceiver.cs" />
     <Compile Include="API\Events\MessageReceivedArgs.cs" />
     <Compile Include="API\IMessageContextParser.cs" />

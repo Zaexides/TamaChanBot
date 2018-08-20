@@ -14,17 +14,30 @@ namespace TamaChanBot.Core
         public delegate Task MessageReceived(MessageReceivedArgs messageReceivedArgs);
         internal event MessageReceived messageReceivedEvent;
 
+        public delegate Task OnConnect();
+        internal event OnConnect onConnectedEvent;
+
+        public delegate Task OnDisconnect(Exception exception);
+        internal event OnDisconnect onDisconnectedEvent;
+
         internal EventSystem(DiscordSocketClient client)
         {
             client.MessageReceived += OnMessageReceived;
             client.Connected += OnConnected;
+            client.Disconnected += OnDisconnected;
             commandInvoker = new CommandInvoker();
         }
 
-        private Task OnConnected()
+        private async Task OnDisconnected(Exception arg)
+        {
+            TamaChan.Instance.Logger.LogInfo("Disconnected...");
+            await onDisconnectedEvent?.Invoke(arg);
+        }
+
+        private async Task OnConnected()
         {
             TamaChan.Instance.Logger.LogInfo("Connected!");
-            return Task.CompletedTask;
+            await onConnectedEvent?.Invoke();
         }
 
         private async Task OnMessageReceived(SocketMessage arg)
@@ -38,7 +51,7 @@ namespace TamaChanBot.Core
             bool isCommand = !arg.Author.IsBot && arg.Content.StartsWith(prefix);
 
             MessageReceivedArgs messageReceivedArgs = new MessageReceivedArgs(arg as SocketUserMessage, isCommand);
-            messageReceivedEvent?.Invoke(messageReceivedArgs);
+            await messageReceivedEvent?.Invoke(messageReceivedArgs);
             if (messageReceivedArgs.isCanceled)
                 return;
 

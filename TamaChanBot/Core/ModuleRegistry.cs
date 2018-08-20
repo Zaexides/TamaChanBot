@@ -84,6 +84,11 @@ namespace TamaChanBot.Core
 
             if (module is IMessageReceiver)
                 eventSystem.messageReceivedEvent += (module as IMessageReceiver).OnMessageReceived;
+            if(module is IConnectionStatusReceiver)
+            {
+                eventSystem.onConnectedEvent += (module as IConnectionStatusReceiver).OnConnected;
+                eventSystem.onDisconnectedEvent += (module as IConnectionStatusReceiver).OnDisconnected;
+            }
         }
 
         private Assembly[] LoadAssemblies()

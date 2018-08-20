@@ -9,10 +9,12 @@ namespace TamaChanBot.Core
 {
     public sealed class TamaChan
     {
+        public const string VERSION = "0.1";
+
         private const int RECONNECT_DELAY = 10000;
 
         private DiscordSocketClient client;
-
+        
         private bool reconnect = true;
 
         public BotSettings botSettings;
@@ -43,6 +45,8 @@ namespace TamaChanBot.Core
             autoSaverCancelTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = autoSaverCancelTokenSource.Token;
             Task.Run(() => AutoSaver.Run(cancellationToken), cancellationToken);
+
+            Logger.LogInfo($"TamaChanBot Version \"{VERSION}\" instantiated.");
         }
 
         public async Task Start()

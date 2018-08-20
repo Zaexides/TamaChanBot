@@ -8,7 +8,7 @@ using TamaChanBot.API.Responses;
 
 namespace CoreModule
 {
-    [Module("TamaChanBot.Core")]
+    [Module("TamaChanBot.Core", Version = "1.0")]
     public class CoreModule : TamaChanModule, IMessageReceiver, IConnectionStatusReceiver
     {
         private const string INVITE_LINK_FORMAT = "https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot&permissions=-1";

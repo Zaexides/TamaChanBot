@@ -6,7 +6,7 @@ using TamaChanBot.API.Responses;
 
 namespace AdminModule
 {
-    [Module("TamaChanBot.Admin")]
+    [Module("TamaChanBot.Admin", Version = "1.0")]
     public class AdminModule : TamaChanModule, IMessageReceiver
     {
         public WordFilter wordFilter;

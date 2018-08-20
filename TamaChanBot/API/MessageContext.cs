@@ -20,6 +20,7 @@ namespace TamaChanBot.API
         public readonly ulong? serverId;
         public readonly ulong messageId;
         public readonly bool isNSFWChannel;
+        public readonly Permission authorPermissions;
 
         public IReadOnlyCollection<ulong> mentionedUserIds;
         public IReadOnlyCollection<ulong> mentionedRoleIds;
@@ -46,8 +47,14 @@ namespace TamaChanBot.API
                 this.serverId = (message.Channel as SocketGuildChannel).Guild.Id;
                 if (message.Channel is ITextChannel)
                     this.isNSFWChannel = (message.Channel as ITextChannel).IsNsfw;
-                else if (message.Channel is IDMChannel)
-                    this.isNSFWChannel = true;
+
+                this.authorPermissions = (Permission)(message.Author as SocketGuildUser).GetPermissions((message.Channel as IGuildChannel)).RawValue;
+            }
+
+            if (message.Channel is IDMChannel)
+            {
+                this.isNSFWChannel = true;
+                this.authorPermissions = (Permission)ulong.MaxValue;
             }
 
             this.mentionedUserIds = message.MentionedUsers.Select(u => u.Id).ToList().AsReadOnly();

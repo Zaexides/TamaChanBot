@@ -12,17 +12,17 @@ namespace CoreModule
     public class CoreModule : TamaChanModule, IMessageReceiver
     {
         private const string INVITE_LINK_FORMAT = "https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot&permissions=-1";
-
-        public static Logger logger = new Logger("CoreModule");
-        public static TamaChanModule instance;
         internal CoreModuleSettings settings;
 
         private GoogleCommand googleCommand;
         private WikipediaSearchCommand wikipediaCommand;
 
+        public static TamaChanModule Instance { get; private set; }
+        public static Logger Logger { get; } = new Logger("CoreModule");
+
         public CoreModule()
         {
-            instance = this;
+            Instance = this;
             settings = CoreModuleSettings.LoadOrCreate<CoreModuleSettings>(CoreModuleSettings.DEFAULT_PATH);
             googleCommand = new GoogleCommand(settings.google);
             wikipediaCommand = new WikipediaSearchCommand();

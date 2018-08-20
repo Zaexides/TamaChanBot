@@ -11,7 +11,7 @@ namespace CoreModule
 
         public GoogleSettings google = new GoogleSettings();
 
-        protected override TamaChanModule ParentModule => CoreModule.instance;
+        protected override TamaChanModule ParentModule => CoreModule.Instance;
 
         public CoreModuleSettings() : this(null) { }
         public CoreModuleSettings(Logger logger) : base(DEFAULT_PATH, logger) { }

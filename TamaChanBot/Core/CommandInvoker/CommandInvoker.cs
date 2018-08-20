@@ -15,17 +15,17 @@ namespace TamaChanBot.Core
         private ResponseHandler responseHandler = new ResponseHandler();
         private readonly string[] booleanTrueTerms = new string[]
         {
-            "true", "yes", "1", "yeah", "yup", "positive", "alright", "ok", "okay", "yay"
+            "true", "yes", "1", "yeah", "yup", "positive", "alright", "ok", "okay", "yay", "enabled", "enable"
         };
         private readonly string[] booleanFalseTerms = new string[]
         {
-            "false", "no", "0", "nope", "nah", "negative", "never", "nay"
+            "false", "no", "0", "nope", "nah", "negative", "never", "nay", "disabled", "disable"
         };
 
         public async Task InvokeCommand(string commandName, MessageContext messageContext, SocketUserMessage socketMessage)
         {
             TamaChan.Instance.Logger.LogInfo($"Received command \"{commandName}\". Details:\r\n{messageContext}");
-            Command command = TamaChan.Instance.CommandRegistry[commandName];
+            Command command = TamaChan.Instance.CommandRegistry[commandName.ToLower()];
             IUser self = await socketMessage.Channel.GetUserAsync(TamaChan.Instance.GetSelf().Id);
 
             if (command == null)

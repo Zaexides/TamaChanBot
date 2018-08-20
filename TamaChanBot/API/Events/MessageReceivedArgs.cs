@@ -11,6 +11,8 @@ namespace TamaChanBot.API.Events
         public readonly ulong? serverId;
         public readonly bool isCommand;
 
+        public bool isCanceled = false;
+
         internal SocketUserMessage userMessage;
 
         internal MessageReceivedArgs(SocketUserMessage userMessage, bool isCommand)

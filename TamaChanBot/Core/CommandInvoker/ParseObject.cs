@@ -17,6 +17,12 @@ namespace TamaChanBot.Core
                 (instance as IParameterParser).ParseParameter(ref unparsedParameters, isOptional, defaultValue, nextParameter);
                 return instance;
             }
+            else if(parameterType.GetInterfaces().Contains(typeof(IMessageContextParser)))
+            {
+                object instance = Activator.CreateInstance(parameterType);
+                (instance as IMessageContextParser).ParseMessageContext(messageContext, isOptional, defaultValue);
+                return instance;
+            }
             else
                 throw new InvalidCastException($"Can't cast \"{parameterType.FullName}\" to \"{typeof(IParameterParser).FullName}\".");
         }

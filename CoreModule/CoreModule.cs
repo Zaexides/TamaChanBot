@@ -50,7 +50,7 @@ namespace CoreModule
         }
 
         [Command("Ping", Description = "Shows the bot's latency.")]
-        public string PingCommand(MessageContext context)
+        public string PingCommand()
         {
             return $"Pong {((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds()}";
         }

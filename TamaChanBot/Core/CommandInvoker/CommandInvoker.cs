@@ -84,10 +84,18 @@ namespace TamaChanBot.Core
             builder.AddMessage("Not enough parameters.", "You are missing some parameters.");
             ParameterInfo[] parameters = command.method.GetParameters();
             string usage = $"{TamaChan.Instance.botSettings.commandPrefix}{commandName}";
-            foreach (ParameterInfo pi in parameters)
+            for(int i = 0; i < parameters.Length; i++)
             {
-                if(!pi.ParameterType.IsAssignableFrom(typeof(MessageContext)))
-                    usage += $" {pi.Name}";
+                ParameterInfo pi = parameters[i];
+
+                if (!pi.ParameterType.IsAssignableFrom(typeof(MessageContext)))
+                {
+                    ParameterInfo nextParameter = (i < parameters.Length - 1) ? parameters[i + 1] : null;
+                    if (pi.IsOptionalParameter(nextParameter))
+                        usage += $" ({pi.Name})";
+                    else
+                        usage += $" {pi.Name}";
+                }
             }
             builder.AddMessage("Usage:", usage);
             await responseHandler.Respond(builder.Build(), channel);
@@ -112,10 +120,7 @@ namespace TamaChanBot.Core
 
         private object GetParameter(ref string unparsedParameters, ParameterInfo parameterInfo, ParameterInfo nextParameter, MessageContext messageContext)
         {
-            bool isOptional = parameterInfo.HasDefaultValue || parameterInfo.IsOptional;
-            if (nextParameter == null)
-                isOptional = isOptional || parameterInfo.GetCustomAttribute<ParamArrayAttribute>() != null;
-            return GetParameter(ref unparsedParameters, parameterInfo.ParameterType, isOptional, parameterInfo.DefaultValue, nextParameter, messageContext);
+            return GetParameter(ref unparsedParameters, parameterInfo.ParameterType, parameterInfo.IsOptionalParameter(nextParameter), parameterInfo.DefaultValue, nextParameter, messageContext);
         }
 
         private object GetParameter(ref string unparsedParameters, Type parameterType, bool isOptional, object defaultValue, ParameterInfo nextParameter, MessageContext messageContext)

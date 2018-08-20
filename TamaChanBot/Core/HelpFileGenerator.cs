@@ -3,6 +3,7 @@ using System.Reflection;
 using System.IO;
 using System.Collections.Generic;
 using TamaChanBot.API;
+using TamaChanBot.Utility;
 
 namespace TamaChanBot.Core
 {
@@ -44,10 +45,18 @@ namespace TamaChanBot.Core
         {
             string content = $"{TamaChan.Instance.botSettings.commandPrefix}{command.name}";
             ParameterInfo[] parameters = command.method.GetParameters();
-            foreach (ParameterInfo parameterInfo in parameters)
+            for(int i = 0; i < parameters.Length; i++)
             {
-                if(!parameterInfo.ParameterType.IsAssignableFrom(typeof(MessageContext)))
-                    content += $" [{parameterInfo.Name}]";
+                ParameterInfo parameterInfo = parameters[i];
+
+                if (!parameterInfo.ParameterType.IsAssignableFrom(typeof(MessageContext)))
+                {
+                    ParameterInfo nextParameter = (i < parameters.Length - 1) ? parameters[i + 1] : null;
+                    if (parameterInfo.IsOptionalParameter(nextParameter))
+                        content += $" ({parameterInfo.Name})";
+                    else
+                        content += $" [{parameterInfo.Name}]";
+                }
             }
             if (command.isNsfw)
                 content += "\r\n(NSFW)";

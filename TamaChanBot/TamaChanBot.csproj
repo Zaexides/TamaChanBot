@@ -134,6 +134,7 @@
     <Compile Include="API\AltCommandAttribute.cs" />
     <Compile Include="API\Events\IMessageReceiver.cs" />
     <Compile Include="API\Events\MessageReceivedArgs.cs" />
+    <Compile Include="API\IMessageContextParser.cs" />
     <Compile Include="API\IParameterParser.cs" />
     <Compile Include="API\ModuleUserSettings.cs" />
     <Compile Include="API\ModuleSettings.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="Core\TamaChan.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\ParameterInfoHelper.cs" />
     <Compile Include="Utility\StringHelper.cs" />
     <Compile Include="Utility\TokenNotSetException.cs" />
     <Compile Include="Utility\TypeCodeHelper.cs" />

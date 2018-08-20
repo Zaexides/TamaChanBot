@@ -27,6 +27,9 @@ namespace TamaChanBot.Core
 
         internal async Task Respond(object response, ISocketMessageChannel channel)
         {
+            if (response == null)
+                return;
+
             if (response is Response)
                 await Respond(response as Response, channel);
             else

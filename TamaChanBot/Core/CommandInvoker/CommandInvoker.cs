@@ -26,16 +26,21 @@ namespace TamaChanBot.Core
         {
             TamaChan.Instance.Logger.LogInfo($"Received command \"{commandName}\". Details:\r\n{messageContext}");
             Command command = TamaChan.Instance.CommandRegistry[commandName];
+            IUser self = await socketMessage.Channel.GetUserAsync(TamaChan.Instance.GetSelf().Id);
 
             if (command == null)
                 await SendErrorResponse("Command not found.", $"The command \"{commandName}\" was not found.", socketMessage.Channel);
-            else if(socketMessage.Author is SocketGuildUser && !UserCanUseCommand(command, socketMessage.Author as SocketGuildUser))
+            else if(socketMessage.Author is SocketGuildUser && !UserCanUseCommand(command, socketMessage.Author as SocketGuildUser, socketMessage.Channel as SocketGuildChannel))
             {
                 await SendErrorResponse("Not enough permissions.", "You don't have the permission to use this command.", socketMessage.Channel);
             }
             else if(command.isNsfw && !(socketMessage.Channel is IDMChannel) && !((socketMessage.Channel is ITextChannel) && (socketMessage.Channel as ITextChannel).IsNsfw))
             {
                 await SendErrorResponse("Not allowed here.", "This is a NSFW command and is only allowed in NSFW channels or DMs.", socketMessage.Channel);
+            }
+            else if(self is SocketGuildUser && !UserCanUseCommand(command, self as SocketGuildUser, socketMessage.Channel as SocketGuildChannel))
+            {
+                await SendErrorResponse("I can't do that.", "I don't have enough permissions to do that.", socketMessage.Channel);
             }
             else
             {
@@ -61,9 +66,11 @@ namespace TamaChanBot.Core
             }
         }
 
-        private bool UserCanUseCommand(Command command, SocketGuildUser user)
+        private bool UserCanUseCommand(Command command, SocketGuildUser user, SocketGuildChannel channel)
         {
-            if(user.GuildPermissions.Administrator || ((ulong)command.permissionFlag & user.GuildPermissions.RawValue) == (ulong)command.permissionFlag)
+            if (user.GuildPermissions.Administrator)
+                return true;
+            if ((user.GetPermissions(channel).RawValue & (ulong)command.permissionFlag) == (ulong)command.permissionFlag)
             {
                 if (!command.botOwnerOnly || TamaChan.Instance.botSettings.ownerUUIDs.Contains(user.Id))
                     return true;

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TamaChanBot", "TamaChanBot\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TamaChanBot.Module.Core", "CoreModule\TamaChanBot.Module.Core.csproj", "{33B0958D-3751-4E18-8D66-C2D6F8DF69C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TamaChanBot.Module.Admin", "AdminModule\TamaChanBot.Module.Admin.csproj", "{5F150C21-85E9-4F44-AA01-DB8620FB8754}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{33B0958D-3751-4E18-8D66-C2D6F8DF69C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33B0958D-3751-4E18-8D66-C2D6F8DF69C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33B0958D-3751-4E18-8D66-C2D6F8DF69C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F150C21-85E9-4F44-AA01-DB8620FB8754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F150C21-85E9-4F44-AA01-DB8620FB8754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F150C21-85E9-4F44-AA01-DB8620FB8754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F150C21-85E9-4F44-AA01-DB8620FB8754}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

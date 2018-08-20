@@ -70,6 +70,28 @@ namespace CoreModule
             return string.Format(INVITE_LINK_FORMAT, BotID);
         }
 
+        [Command("About", Description = "Shows information about the bot.")]
+        public EmbedResponse AboutCommand()
+        {
+            string[] aboutText = TamaChanBot.Core.TamaChan.Instance.botSettings.aboutText;
+
+            EmbedResponse.Builder builder;
+            if(aboutText == null || aboutText.Length == 0)
+            {
+                builder = new EmbedResponse.Builder(EmbedResponseTemplate.Warning);
+                builder.AddMessage("About TamaChanBot", "No about text was set.");
+                return builder.Build();
+            }
+            else
+            {
+                string joinedText = string.Join("\r\n", aboutText);
+
+                builder = new EmbedResponse.Builder(EmbedResponseTemplate.Info);
+                builder.AddMessage($"About TamaChanBot", joinedText);
+                return builder.Build();
+            }
+        }
+
         [Command("Google", Description = "Searches the specified query on Google.")]
         public EmbedResponse GoogleCommand(string query) => googleCommand.Execute(query);
         [Command("Wikipedia", Description = "Looks up the specified article query on Wikipedia.")]

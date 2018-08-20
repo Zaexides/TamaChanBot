@@ -12,7 +12,6 @@ namespace TamaChanBot.Core.Settings
         public bool allowErrorBeeps = true;
         public string botName = "Tama Chan";
         public ulong[] ownerUUIDs = new ulong[] { 0 };
-        public string[] aboutText = new string[0];
 
         public BotSettings()
         {

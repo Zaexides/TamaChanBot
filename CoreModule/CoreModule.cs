@@ -9,7 +9,7 @@ using TamaChanBot.API.Responses;
 namespace CoreModule
 {
     [Module("TamaChanBot.Core")]
-    public class CoreModule : TamaChanModule, IMessageReceiver
+    public class CoreModule : TamaChanModule, IMessageReceiver, IConnectionStatusReceiver
     {
         private const string INVITE_LINK_FORMAT = "https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot&permissions=-1";
         internal CoreModuleSettings settings;
@@ -17,10 +17,10 @@ namespace CoreModule
         private GoogleCommand googleCommand;
         private WikipediaSearchCommand wikipediaCommand;
 
-        public static TamaChanModule Instance { get; private set; }
+        public static CoreModule Instance { get; private set; }
         public static Logger Logger { get; } = new Logger("CoreModule");
 
-        public CoreModule()
+        public override void Initialize()
         {
             Instance = this;
             settings = CoreModuleSettings.LoadOrCreate<CoreModuleSettings>(CoreModuleSettings.DEFAULT_PATH);
@@ -73,7 +73,7 @@ namespace CoreModule
         [Command("About", Description = "Shows information about the bot.")]
         public EmbedResponse AboutCommand()
         {
-            string[] aboutText = TamaChanBot.Core.TamaChan.Instance.botSettings.aboutText;
+            string[] aboutText = settings.aboutText;
 
             EmbedResponse.Builder builder;
             if(aboutText == null || aboutText.Length == 0)
@@ -97,5 +97,45 @@ namespace CoreModule
         [Command("Wikipedia", Description = "Looks up the specified article query on Wikipedia.")]
         [AltCommand("Wiki")]
         public EmbedResponse WikiCommand(string query) => wikipediaCommand.Execute(query);
+
+        [Command("SetPlaying", BotOwnerOnly = true)]
+        public EmbedResponse SetPlayingCommand(string playingStatus)
+        {
+            return SetPlayingStatus(null, playingStatus);
+        }
+
+        [Command("SetStreaming", BotOwnerOnly = true)]
+        public EmbedResponse SetStreamingCommand(URL streamingUrl, string playingStatus)
+        {
+            return SetPlayingStatus(streamingUrl, playingStatus);
+        }
+
+        private EmbedResponse SetPlayingStatus(URL? streamingUrl, string playingStatus)
+        {
+            settings.activity.playingStatus = playingStatus;
+            settings.activity.streamingUrl = streamingUrl.HasValue ? streamingUrl.Value.uri.ToString() : null;
+            Console.WriteLine(settings.activity.streamingUrl);
+            settings.MarkDirty();
+            Task.Run(() => UpdatePlayingStatus());
+
+            EmbedResponse.Builder builder = new EmbedResponse.Builder(EmbedResponseTemplate.Success);
+            builder.AddMessage("Playing status updated succesfully!", playingStatus);
+            return builder.Build();
+        }
+        
+        private async Task UpdatePlayingStatus()
+        {
+            await TamaChanBot.Core.TamaChan.Instance.SetPlayingStatus(settings.activity.playingStatus, settings.activity.streamingUrl);
+        }
+
+        public async Task OnConnected()
+        {
+            await UpdatePlayingStatus();
+        }
+
+        public async Task OnDisconnected(Exception exception)
+        {
+            await Task.CompletedTask;
+        }
     }
 }

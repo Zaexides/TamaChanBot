@@ -16,6 +16,8 @@ namespace TamaChanBot.API
         {
         }
 
+        public abstract void Initialize();
+
         public async Task SendResponse(object response, MessageContext context) => await ResponseHandler.Instance.Respond(response, context);
     }
 }

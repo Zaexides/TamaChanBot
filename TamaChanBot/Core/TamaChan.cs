@@ -92,5 +92,11 @@ namespace TamaChanBot.Core
             else
                 return null;
         }
+
+        public async Task SetPlayingStatus(string status, string streamUrl = null)
+        {
+            Discord.ActivityType activityType = (streamUrl == null) ? Discord.ActivityType.Playing : Discord.ActivityType.Streaming;
+            await client.SetGameAsync(status, streamUrl, activityType);
+        }
     }
 }

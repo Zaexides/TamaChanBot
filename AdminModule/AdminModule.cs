@@ -13,7 +13,7 @@ namespace AdminModule
 
         public static AdminModule Instance { get; private set; }
 
-        public AdminModule()
+        public override void Initialize()
         {
             Instance = this;
             wordFilter = new WordFilter();

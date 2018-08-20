@@ -10,6 +10,7 @@ namespace TamaChanBot.Core.Settings
         public BotToken botToken;
         public string commandPrefix = "t.";
         public bool allowErrorBeeps = true;
+        public bool printDebugLogs = true;
         public string botName = "Tama Chan";
         public ulong[] ownerUUIDs = new ulong[] { 0 };
 

@@ -60,9 +60,9 @@ namespace TamaChanBot.Core
                 ModuleAttribute attribute = module.GetType().GetCustomAttribute<ModuleAttribute>();
                 if (!commandName.IsRegistryValid())
                     throw new ArgumentException($"Command from module {attribute.moduleName} was given an invalid name: \"{commandName}\". Command names may only contain alphabetic characters and periods.");
-                TamaChan.Instance.Logger.LogInfo($"Registering \"{attribute.moduleName} command \"{commandName.ToLower()}\"...");
+                TamaChan.Instance.Logger.LogDebug($"Registering \"{attribute.moduleName} command \"{commandName.ToLower()}\"...");
                 registry.Add(commandName.ToLower(), command);
-                TamaChan.Instance.Logger.LogInfo($"Command \"{commandName.ToLower()}\" registered.");
+                TamaChan.Instance.Logger.LogDebug($"Command \"{commandName.ToLower()}\" registered.");
             }
             catch (Exception ex)
             {

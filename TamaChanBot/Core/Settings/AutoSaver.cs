@@ -48,7 +48,7 @@ namespace TamaChanBot.Core.Settings
 
         private void Save(SaveScheduleInfo scheduleInfo)
         {
-            logger.LogInfo($"Saving \"{scheduleInfo.settings.GetType().FullName}\" to \"{scheduleInfo.path}\"...");
+            logger.LogDebug($"Saving \"{scheduleInfo.settings.GetType().FullName}\" to \"{scheduleInfo.path}\"...");
             try
             {
                 CreateBackup(scheduleInfo.path);

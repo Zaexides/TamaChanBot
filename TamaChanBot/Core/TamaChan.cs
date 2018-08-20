@@ -36,6 +36,7 @@ namespace TamaChanBot.Core
             AutoSaver = new AutoSaver();
             botSettings = new BotSettings().LoadFromFile() as BotSettings;
             Logger.allowSystemBeeps = botSettings.allowErrorBeeps;
+            Logger.ignoreDebug = !botSettings.printDebugLogs;
             client = new DiscordSocketClient();
             EventSystem = new EventSystem(client);
             ModuleRegistry = new ModuleRegistry();

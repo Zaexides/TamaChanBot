@@ -11,6 +11,7 @@ namespace CoreModule
     [Module("TamaChanBot.Core", Version = "1.0")]
     public class CoreModule : TamaChanModule, IMessageReceiver, IConnectionStatusReceiver
     {
+        private const float MAX_LATENCY = 2000.0f;
         private const string INVITE_LINK_FORMAT = "https://discordapp.com/oauth2/authorize?client_id={0}&scope=bot&permissions=-1";
         internal CoreModuleSettings settings;
 
@@ -50,9 +51,30 @@ namespace CoreModule
         }
 
         [Command("Ping", Description = "Shows the bot's latency.")]
-        public string PingCommand()
+        public EmbedResponse PingCommand()
         {
-            return $"Pong {((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds()}";
+            EmbedResponse.Builder builder = new EmbedResponse.Builder(EmbedResponseTemplate.Empty);
+            builder.SetTitle("Awaiting...");
+            EmbedResponse response = builder.Build();
+            response.metadata = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
+            response.onResponseSent = OnPongSent;
+            return response;
+        }
+
+        private void OnPongSent(ResponseSentArgs responseSentArgs, Response response)
+        {
+            long oldTimestamp = (long)response.metadata;
+            long newTimestamp = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
+            long difference = newTimestamp - oldTimestamp;
+
+            EmbedResponse.Builder builder = new EmbedResponse.Builder(EmbedResponseTemplate.Empty);
+            builder.SetTitle($"Pong!\r\nMy latency is {difference}ms!");
+
+            float latencySeverity = (difference / MAX_LATENCY);
+            byte r = (byte)(latencySeverity > MAX_LATENCY ? byte.MaxValue : (latencySeverity * byte.MaxValue));
+            builder.SetColor(r, (byte)(byte.MaxValue - r), 0);
+
+            responseSentArgs.Modify(builder.Build());
         }
 
         [Command("Help", Description = "Sends the help file. In NSFW channels or DMs, it'll also show NSFW commands.")]

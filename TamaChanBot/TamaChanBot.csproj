@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -137,11 +139,13 @@
     <Compile Include="API\Events\MessageReceivedArgs.cs" />
     <Compile Include="API\IMessageContextParser.cs" />
     <Compile Include="API\IParameterParser.cs" />
+    <Compile Include="API\Menu.cs" />
     <Compile Include="API\ModuleUserSettings.cs" />
     <Compile Include="API\ModuleSettings.cs" />
     <Compile Include="API\Responses\DeleteResponse.cs" />
     <Compile Include="API\Responses\EmbedResponse.cs" />
     <Compile Include="API\Responses\EmbedResponseTemplateFactory.cs" />
+    <Compile Include="API\Responses\MenuResponse.cs" />
     <Compile Include="API\Responses\MessageAttachementResponse.cs" />
     <Compile Include="API\Responses\MessageResponse.cs" />
     <Compile Include="API\Responses\Response.cs" />
@@ -160,6 +164,7 @@
     <Compile Include="Core\CommandInvoker\ParseObject.cs" />
     <Compile Include="Core\CommandRegistry.cs" />
     <Compile Include="Core\HelpFileGenerator.cs" />
+    <Compile Include="Core\MenuHandler.cs" />
     <Compile Include="Core\ModuleRegistry.cs" />
     <Compile Include="Core\EventSystem.cs" />
     <Compile Include="Core\Logger.cs" />

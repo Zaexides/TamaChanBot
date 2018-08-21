@@ -14,6 +14,7 @@ namespace TamaChanBot.API
     {
         public readonly string message;
         public readonly string parameterString;
+        public readonly string authorName;
         public readonly ulong authorId;
         public readonly bool sentByBot;
         public readonly ulong? channelId;
@@ -39,6 +40,8 @@ namespace TamaChanBot.API
             if (parameterStart > 0)
                 this.parameterString = this.message.Substring(parameterStart + 1);
 
+            this.authorName = message.Author.Username;
+
             this.authorId = message.Author.Id;
             this.sentByBot = message.Author.IsBot;
             if(message.Channel is SocketGuildChannel)
@@ -48,7 +51,10 @@ namespace TamaChanBot.API
                 if (message.Channel is ITextChannel)
                     this.isNSFWChannel = (message.Channel as ITextChannel).IsNsfw;
 
-                this.authorPermissions = (Permission)(message.Author as SocketGuildUser).GetPermissions((message.Channel as IGuildChannel)).RawValue;
+                SocketGuildUser authorGuildUser = message.Author as SocketGuildUser;
+                if (authorGuildUser.Nickname != null && !authorGuildUser.Nickname.Equals(string.Empty))
+                    this.authorName = authorGuildUser.Nickname;
+                this.authorPermissions = (Permission)authorGuildUser.GetPermissions((message.Channel as IGuildChannel)).RawValue;
             }
 
             if (message.Channel is IDMChannel)

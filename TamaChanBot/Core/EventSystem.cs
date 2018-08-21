@@ -10,6 +10,7 @@ namespace TamaChanBot.Core
     public sealed class EventSystem
     {
         private CommandInvoker commandInvoker;
+        internal MenuHandler MenuHandler { get; private set; }
 
         public delegate Task MessageReceived(MessageReceivedArgs messageReceivedArgs);
         internal event MessageReceived messageReceivedEvent;
@@ -26,6 +27,7 @@ namespace TamaChanBot.Core
             client.Connected += OnConnected;
             client.Disconnected += OnDisconnected;
             commandInvoker = new CommandInvoker();
+            MenuHandler = new MenuHandler();
         }
 
         private async Task OnDisconnected(Exception arg)
@@ -55,6 +57,12 @@ namespace TamaChanBot.Core
             if (messageReceivedArgs.isCanceled)
                 return;
 
+            if(MenuHandler.IsAwaitingResponseFrom(arg.Author.Id, arg.Channel.Id))
+            {
+                object response = MenuHandler.HandleResponse(arg.Author.Id, arg.Channel.Id, context);
+                if (response != null)
+                    await ResponseHandler.Instance.Respond(response, arg.Channel);
+            }
             if (isCommand)
                 await commandInvoker.InvokeCommand(arg.Content.Split(' ')[0].Remove(0, prefix.Length), context, arg as SocketUserMessage);
         }

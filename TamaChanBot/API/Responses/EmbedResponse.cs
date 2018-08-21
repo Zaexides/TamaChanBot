@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord.WebSocket;
@@ -17,6 +18,8 @@ namespace TamaChanBot.API.Responses
         public string IconUrl { get; internal set; }
         public uint Color { get; internal set; }
         public string ImageUrl { get; internal set; }
+        public string Footer { get; internal set; }
+        public string ImageAttachmentFilePath { get; internal set; } = null;
         [JsonProperty]
         internal Message[] messages;
 
@@ -29,7 +32,11 @@ namespace TamaChanBot.API.Responses
 
         internal override async Task<ResponseSentArgs> Respond(ISocketMessageChannel channel)
         {
-            RestUserMessage msg =  await channel.SendMessageAsync(string.Empty, embed: CreateDiscordEmbed());
+            RestUserMessage msg;
+            if (ImageAttachmentFilePath == null)
+                msg = await channel.SendMessageAsync(string.Empty, embed: CreateDiscordEmbed());
+            else
+                msg = await channel.SendFileAsync(ImageAttachmentFilePath, embed: CreateDiscordEmbed());
             return new ResponseSentArgs(msg);
         }
 
@@ -46,6 +53,8 @@ namespace TamaChanBot.API.Responses
 
             if (ImageUrl != null && ImageUrl != string.Empty)
                 embedBuilder.ImageUrl = ImageUrl;
+
+            embedBuilder.WithFooter(this.Footer);
 
             return embedBuilder.Build();
         }
@@ -110,6 +119,20 @@ namespace TamaChanBot.API.Responses
             public Builder SetImageURL(string url)
             {
                 response.ImageUrl = url;
+                response.ImageAttachmentFilePath = null;
+                return this;
+            }
+
+            public Builder SetImageURL(FileInfo fileInfo)
+            {
+                response.ImageUrl = $"attachment://{fileInfo.Name}";
+                response.ImageAttachmentFilePath = fileInfo.FullName;
+                return this;
+            }
+
+            public Builder AddFooter(string footerText)
+            {
+                response.Footer = footerText;
                 return this;
             }
 

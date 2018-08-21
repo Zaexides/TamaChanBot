@@ -32,27 +32,30 @@ namespace TamaChanBot.Core
         {
             foreach(Assembly assembly in assemblies)
             {
-                Type[] assemblyTypes = assembly.GetTypes();
-                foreach(Type type in assemblyTypes)
+                if (!assembly.FullName.StartsWith("Discord.Net"))
                 {
-                    if(!type.IsAbstract && type.IsSubclassOf(typeof(TamaChanModule)))
+                    Type[] assemblyTypes = assembly.GetTypes();
+                    foreach (Type type in assemblyTypes)
                     {
-                        ModuleAttribute moduleAttribute = type.GetCustomAttribute<ModuleAttribute>();
-                        if (moduleAttribute == null)
-                            TamaChan.Instance.Logger.LogWarning($"Class {type.FullName} from {assembly.FullName} inherits TamaChanModule, but does not contain the Module attribute. Module will be ignored.");
-                        else if (moduleAttribute.moduleName.IsRegistryValid())
+                        if (!type.IsAbstract && type.IsSubclassOf(typeof(TamaChanModule)))
                         {
-                            try
+                            ModuleAttribute moduleAttribute = type.GetCustomAttribute<ModuleAttribute>();
+                            if (moduleAttribute == null)
+                                TamaChan.Instance.Logger.LogWarning($"Class {type.FullName} from {assembly.FullName} inherits TamaChanModule, but does not contain the Module attribute. Module will be ignored.");
+                            else if (moduleAttribute.moduleName.IsRegistryValid())
                             {
-                                RegisterModule(type, moduleAttribute, helpFileGenerator);
+                                try
+                                {
+                                    RegisterModule(type, moduleAttribute, helpFileGenerator);
+                                }
+                                catch (Exception ex)
+                                {
+                                    TamaChan.Instance.Logger.LogError($"Could not instantiate and register module {type.FullName} from {assembly.FullName}: " + ex.ToString());
+                                }
                             }
-                            catch (Exception ex)
-                            {
-                                TamaChan.Instance.Logger.LogError($"Could not instantiate and register module {type.FullName} from {assembly.FullName}: " + ex.ToString());
-                            }
+                            else
+                                TamaChan.Instance.Logger.LogError($"Module class {type.FullName} from {assembly.FullName} has invalid characters in its name: \"{moduleAttribute.moduleName}\". May only contain alphabetic characters and periods.");
                         }
-                        else
-                            TamaChan.Instance.Logger.LogError($"Module class {type.FullName} from {assembly.FullName} has invalid characters in its name: \"{moduleAttribute.moduleName}\". May only contain alphabetic characters and periods.");
                     }
                 }
             }

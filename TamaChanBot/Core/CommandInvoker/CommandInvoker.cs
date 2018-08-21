@@ -24,6 +24,10 @@ namespace TamaChanBot.Core
 
         public async Task InvokeCommand(string commandName, MessageContext messageContext, SocketUserMessage socketMessage)
         {
+            IDisposable typingDisposable = null;
+            if (TamaChan.Instance.botSettings.sendTyping)
+                typingDisposable = socketMessage.Channel.EnterTypingState();
+
             TamaChan.Instance.Logger.LogInfo($"Received command \"{commandName}\". Details:\r\n{messageContext}");
             Command command = TamaChan.Instance.CommandRegistry[commandName.ToLower()];
             IUser self = await socketMessage.Channel.GetUserAsync(TamaChan.Instance.GetSelf().Id);
@@ -64,6 +68,9 @@ namespace TamaChanBot.Core
                     TamaChan.Instance.Logger.LogError(ex.ToString());
                 }
             }
+
+            if(typingDisposable != null)
+                typingDisposable.Dispose();
         }
 
         private bool UserCanUseCommand(Command command, SocketGuildUser user, SocketGuildChannel channel)

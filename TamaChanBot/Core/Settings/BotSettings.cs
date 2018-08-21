@@ -13,6 +13,7 @@ namespace TamaChanBot.Core.Settings
         public bool printDebugLogs = true;
         public string botName = "Tama Chan";
         public ulong[] ownerUUIDs = new ulong[] { 0 };
+        public bool sendTyping = true;
 
         public BotSettings()
         {

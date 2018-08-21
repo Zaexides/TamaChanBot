@@ -19,7 +19,7 @@ namespace TamaChanBot.Core
             {
                 int optionId = menu.options.ToList().FindIndex(o => o.Equals(messageContext.message.ToLower()));
                 activeMenus.Remove(userChannelCombo);
-                return menu.response(optionId, messageContext);
+                return menu.response(optionId, messageContext, menu.data);
             }
             else
                 return null;

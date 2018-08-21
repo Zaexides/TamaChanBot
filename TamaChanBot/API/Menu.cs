@@ -8,6 +8,8 @@ namespace TamaChanBot.API
         public readonly string title;
         public readonly string[] options;
         public Response response;
+
+        public object data;
         
         public Menu(string title, Response response, params string[] options)
         {
@@ -18,6 +20,6 @@ namespace TamaChanBot.API
             this.response = response;
         }
 
-        public delegate object Response(int response, MessageContext context);
+        public delegate object Response(int response, MessageContext context, object data);
     }
 }

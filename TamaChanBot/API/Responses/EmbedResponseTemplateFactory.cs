@@ -25,7 +25,10 @@ namespace TamaChanBot.API.Responses
             if ((int)template >= TEMPLATE_SYSTEM_MESSAGE_START && (int)template <= TEMPLATE_SYSTEM_MESSAGE_END)
             {
                 embedResponse.Author = TamaChan.Instance.botSettings.botName;
-                embedResponse.IconUrl = TamaChan.Instance.GetSelf().GetAvatarUrl(Discord.ImageFormat.Auto, 64);
+                if (TamaChan.Instance.GetSelf() == null)
+                    embedResponse.IconUrl = "%SELF%";
+                else
+                    embedResponse.IconUrl = TamaChan.Instance.GetSelf().GetAvatarUrl(Discord.ImageFormat.Auto, 64);
             }
             embedResponse.Title = GetTemplateTitle(template);
             embedResponse.Color = GetTemplateColor(template);

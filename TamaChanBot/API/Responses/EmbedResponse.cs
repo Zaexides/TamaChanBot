@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using Discord;
 using Newtonsoft.Json;
+using TamaChanBot.Core;
 
 namespace TamaChanBot.API.Responses
 {
@@ -13,6 +14,7 @@ namespace TamaChanBot.API.Responses
         public string Author { get; internal set; }
         public string IconUrl { get; internal set; }
         public uint Color { get; internal set; }
+        public string ImageUrl { get; internal set; }
         [JsonProperty]
         internal Message[] messages;
 
@@ -29,12 +31,20 @@ namespace TamaChanBot.API.Responses
             embedBuilder.Title = this.Title;
             embedBuilder.Color = new Color(this.Color);
             embedBuilder.Author = new EmbedAuthorBuilder().WithName(this.Author)
-                .WithIconUrl(this.IconUrl);
+                .WithIconUrl((this.IconUrl == "%SELF%") ? GetBotAvatar() : this.IconUrl);
 
             foreach (Message m in this.messages)
-                embedBuilder.AddField(m.title, m.content);
+                embedBuilder.AddField(m.title, m.content, m.isInline);
+
+            if (ImageUrl != null && ImageUrl != string.Empty)
+                embedBuilder.ImageUrl = ImageUrl;
 
             await channel.SendMessageAsync(string.Empty, embed: embedBuilder.Build());
+        }
+
+        private string GetBotAvatar()
+        {
+            return TamaChan.Instance.GetSelf().GetAvatarUrl(ImageFormat.Auto, 64);
         }
 
         public sealed class Builder
@@ -83,6 +93,18 @@ namespace TamaChanBot.API.Responses
                 return this;
             }
 
+            public Builder AddMessage(string title, string message, bool isInline)
+            {
+                messages.Add(new Message(title, message, isInline));
+                return this;
+            }
+
+            public Builder SetImageURL(string url)
+            {
+                response.ImageUrl = url;
+                return this;
+            }
+
             public EmbedResponse Build()
             {
                 response.messages = messages.ToArray();
@@ -95,11 +117,13 @@ namespace TamaChanBot.API.Responses
         {
             public string title;
             public string content;
+            public bool isInline;
 
-            public Message(string title, string content)
+            public Message(string title, string content, bool isInline = false)
             {
                 this.title = title;
                 this.content = content;
+                this.isInline = isInline;
             }
         }
     }

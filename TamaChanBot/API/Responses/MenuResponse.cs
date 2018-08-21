@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using TamaChanBot.Core;
+using TamaChanBot.API.Events;
 using Discord;
 using Discord.WebSocket;
-using System.Threading.Tasks;
+using Discord.Rest;
 
 namespace TamaChanBot.API.Responses
 {
@@ -41,10 +43,10 @@ namespace TamaChanBot.API.Responses
         }
 #pragma warning restore CS0618 //Enable Obsolete warning.
 
-        internal override Task Respond(ISocketMessageChannel channel)
+        internal override async Task<ResponseSentArgs> Respond(ISocketMessageChannel channel)
         {
             TamaChan.Instance.EventSystem.MenuHandler.AddOrReplaceActiveMenu(this.userId, this.channelId, this.menu);
-            return base.Respond(channel);
+            return await base.Respond(channel);
         }
     }
 }

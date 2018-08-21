@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.WebSocket;
+using TamaChanBot.API.Events;
 
 namespace TamaChanBot.API.Responses
 {
@@ -16,11 +17,12 @@ namespace TamaChanBot.API.Responses
             this.context = context;
         }
 
-        internal override async Task Respond(ISocketMessageChannel channel)
+        internal override async Task<ResponseSentArgs> Respond(ISocketMessageChannel channel)
         {
 #pragma warning disable CS0618 //Disable Obsolete warning.
             await context.wrappedMessage.DeleteAsync();
 #pragma warning restore CS0618 //Disable Obsolete warning.
+            return new ResponseSentArgs(context);
         }
 
         public override string ToString()

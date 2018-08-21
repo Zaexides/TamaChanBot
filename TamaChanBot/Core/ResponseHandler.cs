@@ -5,6 +5,7 @@ using Discord.WebSocket;
 using Discord;
 using TamaChanBot.API.Responses;
 using TamaChanBot.API;
+using TamaChanBot.API.Events;
 
 namespace TamaChanBot.Core
 {
@@ -81,7 +82,8 @@ namespace TamaChanBot.Core
         internal async Task Respond(Response response, ISocketMessageChannel channel)
         {
             TamaChan.Instance.Logger.LogInfo($"Responding with \"{response}\".");
-            await response.Respond(channel);
+            ResponseSentArgs responseSentArgs = await response.Respond(channel);
+            response.onResponseSent?.Invoke(responseSentArgs, response);
         }
     }
 }

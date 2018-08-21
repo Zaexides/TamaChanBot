@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using Discord;
+using Discord.Rest;
 using Newtonsoft.Json;
 using TamaChanBot.Core;
+using TamaChanBot.API.Events;
 
 namespace TamaChanBot.API.Responses
 {
@@ -25,7 +27,13 @@ namespace TamaChanBot.API.Responses
             return JsonConvert.SerializeObject(this);
         }
 
-        internal override async Task Respond(ISocketMessageChannel channel)
+        internal override async Task<ResponseSentArgs> Respond(ISocketMessageChannel channel)
+        {
+            RestUserMessage msg =  await channel.SendMessageAsync(string.Empty, embed: CreateDiscordEmbed());
+            return new ResponseSentArgs(msg);
+        }
+
+        internal Embed CreateDiscordEmbed()
         {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.Title = this.Title;
@@ -39,7 +47,7 @@ namespace TamaChanBot.API.Responses
             if (ImageUrl != null && ImageUrl != string.Empty)
                 embedBuilder.ImageUrl = ImageUrl;
 
-            await channel.SendMessageAsync(string.Empty, embed: embedBuilder.Build());
+            return embedBuilder.Build();
         }
 
         private string GetBotAvatar()

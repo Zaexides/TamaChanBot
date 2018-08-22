@@ -15,8 +15,15 @@ namespace CoreModule
 
         internal GoogleCommand(CoreModuleSettings.GoogleSettings googleSettings)
         {
-            customsearchService = new CustomsearchService(new BaseClientService.Initializer() { ApiKey = googleSettings.apiKey, ApplicationName = "TamaChanBot Core Module" });
-            this.searchId = googleSettings.searchId;
+            try
+            {
+                customsearchService = new CustomsearchService(new BaseClientService.Initializer() { ApiKey = googleSettings.apiKey, ApplicationName = "TamaChanBot Core Module" });
+                this.searchId = googleSettings.searchId;
+            }
+            catch (Exception ex)
+            {
+                CoreModule.Logger.LogError("An error occured! " + ex.ToString());
+            }
         }
 
         internal EmbedResponse Execute(string query)

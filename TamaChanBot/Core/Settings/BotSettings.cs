@@ -7,7 +7,7 @@ namespace TamaChanBot.Core.Settings
 {
     public sealed class BotSettings : Settings
     {
-        public BotToken botToken;
+        public BotToken botToken = new BotToken();
         public string commandPrefix = "t.";
         public bool allowErrorBeeps = true;
         public bool printDebugLogs = true;

@@ -19,6 +19,7 @@ namespace TamaChanBot.API.Responses
         public uint Color { get; internal set; }
         public string ImageUrl { get; internal set; }
         public string Footer { get; internal set; }
+        public string Description { get; internal set; }
         public string ImageAttachmentFilePath { get; internal set; } = null;
         [JsonProperty]
         internal Message[] messages;
@@ -48,13 +49,17 @@ namespace TamaChanBot.API.Responses
             embedBuilder.Author = new EmbedAuthorBuilder().WithName(this.Author)
                 .WithIconUrl((this.IconUrl == "%SELF%") ? GetBotAvatar() : this.IconUrl);
 
-            foreach (Message m in this.messages)
-                embedBuilder.AddField(m.title, m.content, m.isInline);
+            if (this.messages != null)
+            {
+                foreach (Message m in this.messages)
+                    embedBuilder.AddField(m.title, m.content, m.isInline);
+            }
 
             if (ImageUrl != null && ImageUrl != string.Empty)
                 embedBuilder.ImageUrl = ImageUrl;
 
             embedBuilder.WithFooter(this.Footer);
+            embedBuilder.Description = Description;
 
             return embedBuilder.Build();
         }
@@ -130,9 +135,15 @@ namespace TamaChanBot.API.Responses
                 return this;
             }
 
-            public Builder AddFooter(string footerText)
+            public Builder SetFooter(string footerText)
             {
                 response.Footer = footerText;
+                return this;
+            }
+
+            public Builder SetDescription(string description)
+            {
+                response.Description = description;
                 return this;
             }
 

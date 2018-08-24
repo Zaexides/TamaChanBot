@@ -2,36 +2,40 @@
 using System.Linq;
 using System.Collections.Generic;
 using TamaChanBot.API;
+using TamaChanBot.API.Responses;
+using TamaChanBot.Utility;
 
 namespace TamaChanBot.Core
 {
     public class MenuHandler
     {
-        private Dictionary<UserChannelCombo, Menu> activeMenus = new Dictionary<UserChannelCombo, Menu>();
+        private Dictionary<UserChannelCombo, IMenuHandlerObject> activeMenus = new Dictionary<UserChannelCombo, IMenuHandlerObject>();
 
         public bool IsAwaitingResponseFrom(ulong userId, ulong channelId) => activeMenus.ContainsKey(new UserChannelCombo(userId, channelId));
 
         public object HandleResponse(ulong userId, ulong channelId, MessageContext messageContext)
         {
             UserChannelCombo userChannelCombo = new UserChannelCombo(userId, channelId);
-            Menu menu = activeMenus[userChannelCombo];
-            if (menu.options.Contains(messageContext.message.ToLower()))
+            IMenuHandlerObject menuHandlerObject = activeMenus[userChannelCombo];
+
+            object responseObject;
+            if (menuHandlerObject.HandleMenuOperation(out responseObject, messageContext))
             {
-                int optionId = menu.options.ToList().FindIndex(o => o.Equals(messageContext.message.ToLower()));
+                Console.WriteLine("Yes!");
                 activeMenus.Remove(userChannelCombo);
-                return menu.response(optionId, messageContext, menu.data);
+                return responseObject;
             }
             else
                 return null;
         }
 
-        internal void AddOrReplaceActiveMenu(ulong userId, ulong channelId, Menu menu)
+        internal void AddOrReplaceActiveMenu(ulong userId, ulong channelId, IMenuHandlerObject menuHandlerObject)
         {
             UserChannelCombo userChannelCombo = new UserChannelCombo(userId, channelId);
             if (this.activeMenus.ContainsKey(userChannelCombo))
-                this.activeMenus[userChannelCombo] = menu;
+                this.activeMenus[userChannelCombo] = menuHandlerObject;
             else
-                this.activeMenus.Add(new UserChannelCombo(userId, channelId), menu);
+                this.activeMenus.Add(new UserChannelCombo(userId, channelId), menuHandlerObject);
         }
 
         private struct UserChannelCombo

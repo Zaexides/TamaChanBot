@@ -9,7 +9,7 @@ namespace TamaChanBot.Core
 {
     public sealed class TamaChan
     {
-        public const string VERSION = "0.1";
+        public const string VERSION = "0.2";
 
         private const int RECONNECT_DELAY = 10000;
 

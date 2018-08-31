@@ -1,11 +1,12 @@
 ﻿using System;
+using TamaChanBot.API.Events;
 
 namespace TamaChanBot.API.Responses
 {
     public abstract class MenuHandlerObject<TResult> : IMenuHandlerObject
     {
-        public readonly string title;
-        public readonly string description;
+        protected readonly string title;
+        protected readonly string description;
 
         public object data;
 
@@ -15,6 +16,8 @@ namespace TamaChanBot.API.Responses
 
         public string Title { get => title; }
         public string Description { get => description; }
+        public bool DeleteAfterResponse { get; set; }
+        public ResponseSentArgs ResponseSentArgs { get; set; }
 
         public MenuHandlerObject(string title, ResponseHandler<TResult> responseHandler, string description = "")
         {
@@ -30,6 +33,8 @@ namespace TamaChanBot.API.Responses
     {
         string Title { get; }
         string Description { get; }
+        bool DeleteAfterResponse { get; }
+        ResponseSentArgs ResponseSentArgs { get; set; }
         bool HandleMenuOperation(out object response, MessageContext messageContext);
     }
 }

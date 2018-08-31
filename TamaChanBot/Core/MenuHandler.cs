@@ -21,7 +21,8 @@ namespace TamaChanBot.Core
             object responseObject;
             if (menuHandlerObject.HandleMenuOperation(out responseObject, messageContext))
             {
-                Console.WriteLine("Yes!");
+                if (menuHandlerObject.DeleteAfterResponse)
+                    menuHandlerObject.ResponseSentArgs.Delete();
                 activeMenus.Remove(userChannelCombo);
                 return responseObject;
             }

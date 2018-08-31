@@ -41,10 +41,12 @@ namespace TamaChanBot.API.Responses
         }
 #pragma warning restore CS0618 //Enable Obsolete warning.
 
-        internal override Task<ResponseSentArgs> Respond(ISocketMessageChannel channel)
+        internal override async Task<ResponseSentArgs> Respond(ISocketMessageChannel channel)
         {
             TamaChan.Instance.EventSystem.MenuHandler.AddOrReplaceActiveMenu(this.userId, this.channelId, this.menuHandlerObject);
-            return base.Respond(channel);
+            ResponseSentArgs responseSentArgs = await base.Respond(channel);
+            menuHandlerObject.ResponseSentArgs = responseSentArgs;
+            return responseSentArgs;
         }
     }
 }

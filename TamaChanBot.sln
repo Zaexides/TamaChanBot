@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TamaChanBot.Module.BotOwner
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TamaChanBot.Module.Fun", "Private\FunModule\TamaChanBot.Module.Fun.csproj", "{01DF67EA-464A-4162-8411-8B5A036BF2C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TamaChanBot.Module.RPG", "Private\RPGModule\TamaChanBot.Module.RPG.csproj", "{CE1F207A-B935-4568-919E-69B41FE98171}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{01DF67EA-464A-4162-8411-8B5A036BF2C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01DF67EA-464A-4162-8411-8B5A036BF2C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01DF67EA-464A-4162-8411-8B5A036BF2C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE1F207A-B935-4568-919E-69B41FE98171}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE1F207A-B935-4568-919E-69B41FE98171}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE1F207A-B935-4568-919E-69B41FE98171}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE1F207A-B935-4568-919E-69B41FE98171}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{5F150C21-85E9-4F44-AA01-DB8620FB8754} = {4C5AA4DF-9229-41FE-A904-99FBCC4230F7}
 		{2E664185-B588-45DA-89FA-119799E2DF9F} = {0FBF02DC-2B39-4006-BCF5-A9E1699CBF4E}
 		{01DF67EA-464A-4162-8411-8B5A036BF2C1} = {0FBF02DC-2B39-4006-BCF5-A9E1699CBF4E}
+		{CE1F207A-B935-4568-919E-69B41FE98171} = {0FBF02DC-2B39-4006-BCF5-A9E1699CBF4E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F029C7A8-6632-4BEF-81AA-45CD626074EE}

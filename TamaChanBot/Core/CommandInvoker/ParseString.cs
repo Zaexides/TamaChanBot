@@ -9,6 +9,7 @@ namespace TamaChanBot.Core
         private object ParseString(ref string unparsedParameters, bool isOptional, object defaultValue, ParameterInfo nextParameter)
         {
             bool locked = false;
+            char lockCharacter = '\"';
             bool escape = false;
             TypeCode nextParameterTypeCode = nextParameter != null ? Type.GetTypeCode(nextParameter.ParameterType) : TypeCode.Empty;
             string result = string.Empty;
@@ -17,16 +18,21 @@ namespace TamaChanBot.Core
             for(int i = 0; i < unparsedParameters.Length; i++)
             {
                 bool writeCharacter = true;
-                if (!escape && (unparsedParameters[i].Equals('\"') || unparsedParameters[i].Equals('\'')))
+                if ((i == 0 || locked) && !escape && (unparsedParameters[i].Equals('\"') || unparsedParameters[i].Equals('\'')))
                 {
                     writeCharacter = false;
                     if (!locked)
+                    {
                         locked = true;
-                    else
+                        lockCharacter = unparsedParameters[i];
+                    }
+                    else if (unparsedParameters[i].Equals(lockCharacter))
                     {
                         removeCharacters++;
                         break;
                     }
+                    else
+                        writeCharacter = true;
                 }
                 else if (!locked && i > 0 && char.IsWhiteSpace(unparsedParameters[i - 1]))
                 {

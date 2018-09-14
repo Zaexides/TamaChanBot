@@ -33,7 +33,7 @@ namespace TamaChanBot.Core
                 CommandAttribute attribute = m.GetCustomAttribute<CommandAttribute>();
                 if(attribute != null)
                 {
-                    Command command = new Command(attribute.commandName, m, attribute.PermissionFlag, attribute.BotOwnerOnly, attribute.IsNSFW, module);
+                    Command command = new Command(attribute.commandName, m, attribute.PermissionFlag, attribute.BotOwnerOnly, attribute.IsNSFW, attribute.ParameterExample, module);
                     RegisterCommand(module, attribute.commandName, command);
 
                     if (registry.ContainsKey(attribute.commandName.ToLower()))

@@ -11,6 +11,7 @@ namespace TamaChanBot.API
         public Permission PermissionFlag { get; set; }
         public bool BotOwnerOnly { get; set; }
         public bool IsNSFW { get; set; }
+        public string ParameterExample { get; set; }
 
         public CommandAttribute(string commandName)
         {

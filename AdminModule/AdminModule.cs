@@ -21,15 +21,27 @@ namespace AdminModule
 
         public Task OnMessageReceived(MessageReceivedArgs messageReceivedArgs) => wordFilter.OnMessageReceived(messageReceivedArgs);
         
-        [Command("WordFilter", PermissionFlag = Permission.ManageMessages, Description = "Enabled or disables the word filter on this server.")]
+        [Command("WordFilter",
+            PermissionFlag = Permission.ManageMessages,
+            Description = "Enabled or disables the word filter on this server.",
+            ParameterExample = "enable"
+            )]
         [AltCommand("WF")]
         public EmbedResponse WordFilterEnableCommand(MessageContext context, bool enableOrDisable) => wordFilter.EnableCommand(context, enableOrDisable);
 
-        [Command("WordFilterAdd", PermissionFlag = Permission.ManageMessages, Description = "Adds a word to the word filter.")]
+        [Command("WordFilterAdd",
+            PermissionFlag = Permission.ManageMessages,
+            Description = "Adds a word to the word filter.",
+            ParameterExample = "banana"
+            )]
         [AltCommand("WFAdd")]
         public EmbedResponse WordFilterAddCommand(MessageContext context, string word) => wordFilter.AddWordCommand(context, word);
 
-        [Command("WordFilterRemove", PermissionFlag = Permission.ManageMessages, Description = "Removes a word from the world filter.")]
+        [Command("WordFilterRemove",
+            PermissionFlag = Permission.ManageMessages,
+            Description = "Removes a word from the world filter.",
+            ParameterExample = "banana"
+            )]
         [AltCommand("WFRemove")]
         public EmbedResponse WordFilterRemoveCommand(MessageContext context, string word) => wordFilter.RemoveWordCommand(context, word);
     }

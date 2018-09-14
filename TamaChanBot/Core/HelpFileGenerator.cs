@@ -53,7 +53,7 @@ namespace TamaChanBot.Core
             TableBuilder adminCommandTable = new TableBuilder().SetCaption(new TableBuilder.Caption().TagContentBuilder.AddText("Admin Commands").Parent as TableBuilder.Caption).SetId("admin") as TableBuilder;
             TableBuilder ownerCommandTable = new TableBuilder().SetCaption(new TableBuilder.Caption().TagContentBuilder.AddText("Bot Owner Commands").Parent as TableBuilder.Caption).SetId("owner") as TableBuilder;
 
-            string[] tableHeaders = new string[] { "Command", "Parameters", "Description", "Required Permissions" };
+            string[] tableHeaders = new string[] { "Command", "Parameters", "Description", "Example", "Required Permissions" };
             TableBuilder[] tables = new TableBuilder[] { commandTable, adminCommandTable, nsfwCommandTable, ownerCommandTable };
             foreach (TableBuilder t in tables)
             {
@@ -80,6 +80,7 @@ namespace TamaChanBot.Core
                     TableBuilder.Row.Cell.CreateTableData().TagContentBuilder.AddText($"{TamaChan.Instance.botSettings.commandPrefix}{c.name}").Parent as TableBuilder.Row.Cell,
                     TableBuilder.Row.Cell.CreateTableData().TagContentBuilder.AddSection(GetParametersDivision(c)).Parent as TableBuilder.Row.Cell,
                     TableBuilder.Row.Cell.CreateTableData().TagContentBuilder.AddText(c.Description).Parent as TableBuilder.Row.Cell,
+                    TableBuilder.Row.Cell.CreateTableData().TagContentBuilder.AddText(c.Example).Parent as TableBuilder.Row.Cell,
                     TableBuilder.Row.Cell.CreateTableData().TagContentBuilder.AddSection(GetPermissionDivisions(c)).Parent as TableBuilder.Row.Cell
                     ));
 
@@ -236,7 +237,7 @@ namespace TamaChanBot.Core
                     .AddProperty(new CSSProperty("border-width", "1px")),
                 new CSSHTMLElement("th:nth-child(2), td:nth-child(2)")
                     .AddProperty(new CSSProperty("width", "15%")),
-                new CSSHTMLElement("th:nth-child(4), td:nth-child(4)")
+                new CSSHTMLElement("th:nth-child(5), td:nth-child(5)")
                     .AddProperty(new CSSProperty("width", "12.5%")),
 
                 new CSSClassElement("parameter")

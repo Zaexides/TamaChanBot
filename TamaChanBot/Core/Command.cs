@@ -13,16 +13,23 @@ namespace TamaChanBot.Core
         public readonly bool botOwnerOnly;
         public readonly bool isNsfw;
         public readonly TamaChanModule module;
+        private readonly string example;
         
         public string Description { get; set; }
 
-        internal Command(string name, MethodInfo method, Permission permissionFlag, bool botOwnerOnly, bool isNsfw, TamaChanModule module)
+        public string Example
+        {
+            get => $"{TamaChan.Instance.botSettings.commandPrefix}{name} {example}";
+        }
+
+        internal Command(string name, MethodInfo method, Permission permissionFlag, bool botOwnerOnly, bool isNsfw, string example, TamaChanModule module)
         {
             this.name = name;
             this.method = method;
             this.permissionFlag = permissionFlag;
             this.botOwnerOnly = botOwnerOnly;
             this.isNsfw = isNsfw;
+            this.example = example;
             this.module = module;
         }
 

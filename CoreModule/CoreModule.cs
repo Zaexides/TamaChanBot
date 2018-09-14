@@ -108,19 +108,33 @@ namespace CoreModule
             }
         }
 
-        [Command("Google", Description = "Searches the specified query on Google.")]
+        [Command("Google",
+            Description = "Searches the specified query on Google.",
+            ParameterExample = "\"How to pet a puppy?\""
+            )]
         public EmbedResponse GoogleCommand(string query) => googleCommand.Execute(query);
-        [Command("Wikipedia", Description = "Looks up the specified article query on Wikipedia.")]
+        [Command("Wikipedia",
+            Description = "Looks up the specified article query on Wikipedia.",
+            ParameterExample = "\"Thermonuclear War\""
+            )]
         [AltCommand("Wiki")]
         public EmbedResponse WikiCommand(string query) => wikipediaCommand.Execute(query);
 
-        [Command("SetPlaying", BotOwnerOnly = true)]
+        [Command("SetPlaying",
+            BotOwnerOnly = true,
+            Description = "Sets the bot's playing status.",
+            ParameterExample = "\"with friends!\""
+            )]
         public EmbedResponse SetPlayingCommand(string playingStatus)
         {
             return SetPlayingStatus(null, playingStatus);
         }
 
-        [Command("SetStreaming", BotOwnerOnly = true)]
+        [Command("SetStreaming",
+            BotOwnerOnly = true,
+            Description = "Sets the bot's playing status as streaming.",
+            ParameterExample = "https://www.twitch.tv/twitch \"with friends!\""
+            )]
         public EmbedResponse SetStreamingCommand(URL streamingUrl, string playingStatus)
         {
             return SetPlayingStatus(streamingUrl, playingStatus);

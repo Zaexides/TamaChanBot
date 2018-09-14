@@ -112,6 +112,8 @@ namespace TamaChanBot.Core
                 }
             }
             builder.AddMessage("Usage:", usage);
+            builder.SetFooter($"Example: {command.Example}");
+
             await responseHandler.Respond(builder.Build(), channel);
         }
 

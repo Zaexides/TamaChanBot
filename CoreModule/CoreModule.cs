@@ -77,14 +77,8 @@ namespace CoreModule
             responseSentArgs.Modify(builder.Build());
         }
 
-        [Command("Help", Description = "Sends the help file. In NSFW channels or DMs, it'll also show NSFW commands.")]
-        public MessageAttachementResponse HelpCommand(MessageContext messageContext)
-        {
-            if (messageContext.isNSFWChannel)
-                return new MessageAttachementResponse(string.Empty, TamaChanBot.Core.HelpFileGenerator.NSFW_HELP_FILE_PATH);
-            else
-                return new MessageAttachementResponse(string.Empty, TamaChanBot.Core.HelpFileGenerator.HELP_FILE_PATH);
-        }
+        [Command("Help", Description = "Sends this help file.")]
+        public MessageAttachementResponse HelpCommand(MessageContext messageContext) => new MessageAttachementResponse(string.Empty, TamaChanBot.Core.HelpFileGenerator.HTML_HELP_FILE_PATH);
 
         [Command("Invite", Description = "Sends an invite link.")]
         public string InviteCommand()

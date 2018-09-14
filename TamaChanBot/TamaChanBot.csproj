@@ -143,6 +143,7 @@
     <Compile Include="API\Events\ResponseSentArgs.cs" />
     <Compile Include="API\IMessageContextParser.cs" />
     <Compile Include="API\IParameterParser.cs" />
+    <Compile Include="API\SpecialParameters\MentionParameter.cs" />
     <Compile Include="API\Responses\BaseMenuResponse.cs" />
     <Compile Include="API\Responses\Menus\Menu.cs" />
     <Compile Include="API\ModuleUserSettings.cs" />
@@ -156,6 +157,9 @@
     <Compile Include="API\Responses\MessageResponse.cs" />
     <Compile Include="API\Responses\QuestionResponse.cs" />
     <Compile Include="API\Responses\Response.cs" />
+    <Compile Include="API\SpecialParameters\ChannelMentions.cs" />
+    <Compile Include="API\SpecialParameters\RoleMentions.cs" />
+    <Compile Include="API\SpecialParameters\UserMentions.cs" />
     <Compile Include="API\URL.cs" />
     <Compile Include="Core\Command.cs" />
     <Compile Include="API\CommandAttribute.cs" />

@@ -34,15 +34,15 @@ namespace TamaChanBot.Core
 
             if (command == null)
                 await SendErrorResponse("Command not found.", $"The command \"{commandName}\" was not found.", socketMessage.Channel);
-            else if(socketMessage.Author is SocketGuildUser && !UserCanUseCommand(command, socketMessage.Author as SocketGuildUser, socketMessage.Channel as SocketGuildChannel))
+            else if (socketMessage.Author is SocketGuildUser && !UserCanUseCommand(command, socketMessage.Author as SocketGuildUser, socketMessage.Channel as SocketGuildChannel))
             {
                 await SendErrorResponse("Not enough permissions.", "You don't have the permission to use this command.", socketMessage.Channel);
             }
-            else if(command.isNsfw && !(socketMessage.Channel is IDMChannel) && !((socketMessage.Channel is ITextChannel) && (socketMessage.Channel as ITextChannel).IsNsfw))
+            else if (command.isNsfw && !(socketMessage.Channel is IDMChannel) && !((socketMessage.Channel is ITextChannel) && (socketMessage.Channel as ITextChannel).IsNsfw))
             {
                 await SendErrorResponse("Not allowed here.", "This is a NSFW command and is only allowed in NSFW channels or DMs.", socketMessage.Channel);
             }
-            else if(self is SocketGuildUser && !UserCanUseCommand(command, self as SocketGuildUser, socketMessage.Channel as SocketGuildChannel))
+            else if (self is SocketGuildUser && !UserCanUseCommand(command, self as SocketGuildUser, socketMessage.Channel as SocketGuildChannel))
             {
                 await SendErrorResponse("I can't do that.", "I don't have enough permissions to do that.", socketMessage.Channel);
             }
@@ -51,7 +51,7 @@ namespace TamaChanBot.Core
                 try
                 {
                     object[] parameters = GetParameters(messageContext.parameterString, command.method.GetParameters(), messageContext);
-                    await responseHandler.Respond(command.Invoke(parameters), socketMessage.Channel);
+                    await responseHandler.Respond(await command.Invoke(parameters), socketMessage.Channel);
                 }
                 catch (ArgumentNullException argNullEx)
                 {
@@ -62,14 +62,14 @@ namespace TamaChanBot.Core
                     await SendMissingParametersErrorResponse(command, commandName, socketMessage.Channel);
                     TamaChan.Instance.Logger.LogWarning($"Error details: {tarParCountEx.ToString()}");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     await SendErrorResponse("Something went wrong...", $"Please inform the bot owner of this error with as many details as possible.\nError: {ex.GetType().FullName}", socketMessage.Channel);
                     TamaChan.Instance.Logger.LogError(ex.ToString());
                 }
             }
 
-            if(typingDisposable != null)
+            if (typingDisposable != null)
                 typingDisposable.Dispose();
         }
 
@@ -98,7 +98,7 @@ namespace TamaChanBot.Core
             builder.AddMessage("Not enough parameters.", "You are missing some parameters.");
             ParameterInfo[] parameters = command.method.GetParameters();
             string usage = $"{TamaChan.Instance.botSettings.commandPrefix}{commandName}";
-            for(int i = 0; i < parameters.Length; i++)
+            for (int i = 0; i < parameters.Length; i++)
             {
                 ParameterInfo pi = parameters[i];
 
@@ -142,7 +142,7 @@ namespace TamaChanBot.Core
         private object GetParameter(ref string unparsedParameters, Type parameterType, bool isOptional, object defaultValue, ParameterInfo nextParameter, MessageContext messageContext)
         {
             TypeCode typeCode = Type.GetTypeCode(parameterType);
-            if(typeCode == TypeCode.Object)
+            if (typeCode == TypeCode.Object)
             {
                 if (parameterType.IsArray)
                 {
@@ -154,11 +154,11 @@ namespace TamaChanBot.Core
                 else
                     return ParseObject(ref unparsedParameters, parameterType, isOptional, defaultValue, nextParameter, messageContext);
             }
-            else if(typeCode == TypeCode.String)
+            else if (typeCode == TypeCode.String)
             {
                 return ParseString(ref unparsedParameters, isOptional, defaultValue, nextParameter);
             }
-            else if((int)typeCode >= (int)TypeCode.Boolean && (int)typeCode <= (int)TypeCode.Decimal)
+            else if ((int)typeCode >= (int)TypeCode.Boolean && (int)typeCode <= (int)TypeCode.Decimal)
             {
                 string unparsedSoleParameter = unparsedParameters;
                 int soleParameterEndPosition = unparsedSoleParameter.IndexOf(' ');

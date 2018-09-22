@@ -16,6 +16,7 @@ namespace CoreModule
         internal CoreModuleSettings settings;
 
         private GoogleCommand googleCommand;
+        private YouTubeCommand youTubeCommand;
         private WikipediaSearchCommand wikipediaCommand;
 
         public static CoreModule Instance { get; private set; }
@@ -26,6 +27,7 @@ namespace CoreModule
             Instance = this;
             settings = CoreModuleSettings.LoadOrCreate<CoreModuleSettings>(CoreModuleSettings.DEFAULT_PATH);
             googleCommand = new GoogleCommand(settings.google);
+            youTubeCommand = new YouTubeCommand(settings.youtubeApiKey);
             wikipediaCommand = new WikipediaSearchCommand();
         }
 
@@ -113,6 +115,11 @@ namespace CoreModule
             ParameterExample = "\"How to pet a puppy?\""
             )]
         public EmbedResponse GoogleCommand(string query) => googleCommand.Execute(query);
+        [Command("YouTube",
+            Description = "Searches for a video/channel/playlist on YouTube.",
+            ParameterExample = "\"Wan Wan Someone!\""
+            )]
+        public EmbedResponse YouTubeCommand(string query) => youTubeCommand.Execute(query);
         [Command("Wikipedia",
             Description = "Looks up the specified article query on Wikipedia.",
             ParameterExample = "\"Thermonuclear War\""

@@ -10,6 +10,7 @@ namespace CoreModule
         public const string DEFAULT_PATH = "Settings";
 
         public GoogleSettings google = new GoogleSettings();
+        public string youtubeApiKey = string.Empty;
 
         public string[] aboutText = new string[0];
         public ActivitySettings activity = new ActivitySettings();

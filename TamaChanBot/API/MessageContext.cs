@@ -24,7 +24,7 @@ namespace TamaChanBot.API
         public readonly bool isNSFWChannel;
         public readonly Permission authorPermissions;
 
-        public MentionInfo[] mentionedUsers;
+        public UserMentionInfo[] mentionedUsers;
         public MentionInfo[] mentionedRoles;
         public MentionInfo[] mentionedChannels;
 
@@ -65,7 +65,7 @@ namespace TamaChanBot.API
                 this.authorPermissions = (Permission)ulong.MaxValue;
             }
 
-            List<MentionInfo> mentions = new List<MentionInfo>();
+            List<UserMentionInfo> userMentions = new List<UserMentionInfo>();
             foreach (SocketUser user in message.MentionedUsers)
             {
                 string name = user.Username;
@@ -75,11 +75,11 @@ namespace TamaChanBot.API
                     if (guildUser.Nickname != null && guildUser.Nickname != string.Empty)
                         name = guildUser.Nickname;
                 }
-                mentions.Add(new MentionInfo(user.Id, name, "@"));
+                userMentions.Add(new UserMentionInfo(user.Id, name, "@", user.IsBot));
             }
-            mentionedUsers = mentions.ToArray();
+            mentionedUsers = userMentions.ToArray();
 
-            mentions.Clear();
+            List<MentionInfo> mentions = new List<MentionInfo>();
             foreach (SocketRole role in message.MentionedRoles)
                 mentions.Add(new MentionInfo(role.Id, role.Name, "@&"));
             mentionedRoles = mentions.ToArray();
@@ -127,6 +127,16 @@ namespace TamaChanBot.API
             public override string ToString()
             {
                 return $"<{prefix}{id}>";
+            }
+        }
+
+        public class UserMentionInfo : MentionInfo
+        {
+            public readonly bool isBot;
+
+            internal UserMentionInfo(ulong id, string name, string prefix, bool isBot) : base(id, name, prefix)
+            {
+                this.isBot = isBot;
             }
         }
     }

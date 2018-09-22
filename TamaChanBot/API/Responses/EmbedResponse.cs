@@ -20,6 +20,8 @@ namespace TamaChanBot.API.Responses
         public string ImageUrl { get; internal set; }
         public string Footer { get; internal set; }
         public string Description { get; internal set; }
+        public string URL { get; internal set; }
+        public string ThumbnailURL { get; internal set; }
         public string ImageAttachmentFilePath { get; internal set; } = null;
         [JsonProperty]
         internal Message[] messages;
@@ -60,6 +62,8 @@ namespace TamaChanBot.API.Responses
 
             embedBuilder.WithFooter(this.Footer);
             embedBuilder.Description = Description;
+            embedBuilder.WithUrl(URL);
+            embedBuilder.WithThumbnailUrl(ThumbnailURL);
 
             return embedBuilder.Build();
         }
@@ -144,6 +148,18 @@ namespace TamaChanBot.API.Responses
             public Builder SetDescription(string description)
             {
                 response.Description = description;
+                return this;
+            }
+
+            public Builder SetURL(string url)
+            {
+                response.URL = url;
+                return this;
+            }
+
+            public Builder SetThumbnailURL(string url)
+            {
+                response.ThumbnailURL = url;
                 return this;
             }
 

@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using TamaChanBot.Core;
-using TamaChanBot.API.Events;
-using Discord;
-using Discord.WebSocket;
-using Discord.Rest;
 
 namespace TamaChanBot.API.Responses
 {
@@ -13,9 +6,19 @@ namespace TamaChanBot.API.Responses
     {
         public MenuResponse(Menu menu, MessageContext context) : base(menu, context)
         {
+            string[] options;
+            if (menu.AllowNumericAnswers)
+            {
+                options = new string[menu.options.Length];
+                for (int i = 0; i < menu.options.Length; i++)
+                    options[i] = $"{i + 1} - {menu.options[i]}";
+            }
+            else
+                options = menu.options;
+
             this.messages = new Message[1]
             {
-                new Message("Options:", string.Join("\r\n", menu.options))
+                new Message("Options:", string.Join("\r\n", options))
             };
         }
     }

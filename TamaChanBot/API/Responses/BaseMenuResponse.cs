@@ -34,6 +34,7 @@ namespace TamaChanBot.API.Responses
             this.Title = menuHandlerObject.Title;
 
             this.Description = menuHandlerObject.Description;
+            this.Footer = menuHandlerObject.Footer;
 
             this.userId = context.authorId;
             this.channelId = context.wrappedMessage.Channel.Id;

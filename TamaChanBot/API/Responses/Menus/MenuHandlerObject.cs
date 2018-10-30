@@ -16,6 +16,7 @@ namespace TamaChanBot.API.Responses
 
         public string Title { get => title; }
         public string Description { get => description; }
+        public string Footer { get; set; }
         public bool DeleteAfterResponse { get; set; }
         public ResponseSentArgs ResponseSentArgs { get; set; }
 
@@ -33,6 +34,7 @@ namespace TamaChanBot.API.Responses
     {
         string Title { get; }
         string Description { get; }
+        string Footer { get; }
         bool DeleteAfterResponse { get; }
         ResponseSentArgs ResponseSentArgs { get; set; }
         bool HandleMenuOperation(out object response, MessageContext messageContext);

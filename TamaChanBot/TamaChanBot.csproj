@@ -131,8 +131,9 @@
     <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
     </Reference>
-    <Reference Include="ZaeTools.HTML">
-      <HintPath>..\..\..\..\Visual Studio 2015\Projects\ZaeTools\ZaeTools.HTML\bin\x64\ZaeTools.HTML.dll</HintPath>
+    <Reference Include="ZaeTools.HTML, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\libraries\ZaeTools.HTML.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

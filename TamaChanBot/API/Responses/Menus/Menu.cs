@@ -67,7 +67,7 @@ namespace TamaChanBot.API.Responses
             if (int.TryParse(messageContext.message, out optionId))
             {
                 optionId--;
-                return optionId > 0 && optionId < maxOptions;
+                return optionId >= 0 && optionId < maxOptions;
             }
             return false;
         }

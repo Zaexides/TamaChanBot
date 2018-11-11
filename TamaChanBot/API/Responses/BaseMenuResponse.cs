@@ -40,6 +40,21 @@ namespace TamaChanBot.API.Responses
             this.channelId = context.wrappedMessage.Channel.Id;
             this.menuHandlerObject = menuHandlerObject;
         }
+
+        public BaseMenuResponse(IMenuHandlerObject menuHandlerObject, MessageContext context, EmbedResponse baseEmbed)
+        {
+            this.Author = baseEmbed.Author;
+            this.Color = baseEmbed.Color;
+            this.Description = baseEmbed.Description;
+            this.Footer = baseEmbed.Footer;
+            this.IconUrl = baseEmbed.IconUrl;
+            this.ImageAttachmentFilePath = baseEmbed.ImageAttachmentFilePath;
+            this.ImageUrl = baseEmbed.ImageUrl;
+            this.ThumbnailURL = baseEmbed.ThumbnailURL;
+            this.Title = baseEmbed.Title;
+            this.URL = baseEmbed.URL;
+            this.messages = baseEmbed.messages;
+        }
 #pragma warning restore CS0618 //Enable Obsolete warning.
 
         internal override async Task<ResponseSentArgs> Respond(ISocketMessageChannel channel)

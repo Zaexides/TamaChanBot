@@ -1,10 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TamaChanBot.API.Responses
 {
     public class MenuResponse : BaseMenuResponse
     {
         public MenuResponse(Menu menu, MessageContext context) : base(menu, context)
+        {
+            AddOptions(menu);
+        }
+
+        public MenuResponse(Menu menu, MessageContext context, EmbedResponse baseEmbed) : base(menu, context, baseEmbed)
+        {
+            AddOptions(menu);
+        }
+
+        private void AddOptions(Menu menu)
         {
             string[] options;
             if (menu.AllowNumericAnswers)
@@ -16,10 +27,13 @@ namespace TamaChanBot.API.Responses
             else
                 options = menu.options;
 
-            this.messages = new Message[1]
-            {
-                new Message("Options:", string.Join("\r\n", options))
-            };
+            List<Message> messages;
+            if (this.messages != null)
+                messages = new List<Message>(this.messages);
+            else
+                messages = new List<Message>();
+            messages.Add(new Message("Options:", string.Join("\r\n", options)));
+            this.messages = messages.ToArray();
         }
     }
 }

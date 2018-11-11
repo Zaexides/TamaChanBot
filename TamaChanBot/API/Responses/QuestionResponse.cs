@@ -14,5 +14,9 @@ namespace TamaChanBot.API.Responses
         public QuestionResponse(OpenQuestion openQuestion, MessageContext messageContext) : base(openQuestion, messageContext)
         {
         }
+
+        public QuestionResponse(OpenQuestion openQuestion, MessageContext messageContext, EmbedResponse baseEmbed) : base(openQuestion, messageContext, baseEmbed)
+        {
+        }
     }
 }
